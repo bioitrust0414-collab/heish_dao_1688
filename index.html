@@ -235,39 +235,21 @@
 
             <!-- 右側：高雅水墨風格內嵌播放器與勾稽結果 (8/12) -->
             <div class="lg:col-span-8 flex flex-col space-y-6">
-                <div class="tao-border p-5 rounded-xl relative overflow-hidden bg-[#faf8f3] border-[#c39b4b]/40">
+                <!-- 嵌入式播放器容器 (套用 CSS Clip 機制排除飛書頂部工具列) -->
+                <div class="tao-border p-5 rounded-xl bg-[#faf8f3] border-[#c39b4b]/40">
                     
-                    <!-- 嵌入式播放器容器 -->
-                    <div class="relative w-full aspect-video rounded-lg overflow-hidden bg-black border border-[#c39b4b]/20 shadow-inner flex flex-col justify-between">
-                        
-                        <!-- 嵌入式 iFrame (核心影片播放器) -->
+                    <div class="relative w-full aspect-video rounded-lg overflow-hidden bg-black border border-[#c39b4b]/20 shadow-inner">
+                        <!-- 嵌入式 iFrame (將頂部欄往外推出 60px 達到完美乾淨的影片呈現) -->
                         <iframe 
                             id="embedded-video-player"
-                            class="absolute inset-0 w-full h-full z-10 bg-black"
+                            class="absolute left-0 w-full z-10 bg-black"
+                            style="top: -60px; height: calc(100% + 60px); border: none;"
                             src="https://jjps7upfcrv0.jp.larksuite.com/file/QclUb5ZjnoAZwBxLqr2jlKZZpee?from=from_copylink" 
                             allowfullscreen 
                             sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"
+                            scrolling="no"
                             loading="lazy">
                         </iframe>
-
-                        <!-- 當瀏覽器因安全政策（如跨域或Cookie阻擋）不允許載入 Lark 頁面時的頂層優雅覆蓋按鈕與導引 -->
-                        <div class="absolute bottom-2 right-2 z-20 flex items-center space-x-2">
-                            <a href="https://jjps7upfcrv0.jp.larksuite.com/file/QclUb5ZjnoAZwBxLqr2jlKZZpee?from=from_copylink" 
-                               target="_blank" 
-                               rel="noopener noreferrer" 
-                               class="px-4 py-2 bg-[#b22d25]/90 hover:bg-[#b22d25] text-white text-[11px] font-bold tracking-[0.15em] rounded shadow-md transition-all flex items-center space-x-1.5 backdrop-blur-sm">
-                                <i class="fa-solid fa-expand"></i>
-                                <span>大螢幕/新視窗播放原片</span>
-                            </a>
-                        </div>
-                    </div>
-
-                    <!-- 安全政策友善提示條 -->
-                    <div class="bg-amber-50 border border-amber-200/50 rounded p-3 text-xs text-[#3d3a35]/90 flex items-start space-x-2 mt-3">
-                        <i class="fa-solid fa-circle-info text-amber-600 mt-0.5"></i>
-                        <p class="leading-relaxed">
-                            <strong>嵌入說明：</strong> 此影片來源為飛書雲端原檔。若上方嵌入畫面未正常顯示，或出現登入限制，請直接點擊右下角「<strong>大螢幕/新視窗播放原片</strong>」按鈕，即可在官方雲端伺服器順暢觀看。
-                        </p>
                     </div>
 
                     <!-- 即時字幕與玄門解析 -->
@@ -718,7 +700,6 @@
         <p id="toast-msg" class="text-xs text-[#1c1a17] leading-relaxed font-light"></p>
     </div>
 
-    <!-- STREAMING_CHUNK: Coding logic, databases and animations inside <script> -->
     <script>
         // 影片與古籍經緯勾稽資料庫
         const videoChaptersData = [
@@ -739,7 +720,7 @@
                 num: "CHAPTER 02",
                 title: "採藥歸鼎：細胞呼吸與真氣回春",
                 duration: "04:12",
-                url: "https://jjps7upfcrv0.jp.larksuite.com/file/QclUb5ZjnoAZwBxLqr2jlKZZpee?from=from_copylink", // 保留相同飛書原檔作為全能指向
+                url: "https://jjps7upfcrv0.jp.larksuite.com/file/QclUb5ZjnoAZwBxLqr2jlKZZpee?from=from_copylink", 
                 spoken: "「採天地之元氣，將藥料納入下丹田之爐鼎。以意領氣，活化細胞本源命火。」",
                 classic_title: "《悟真篇・金丹歌》",
                 classic_desc: "「鉛汞相投結胎砂，乾坤交媾產仙芽。」指體內不同生命化學物質的和諧交互，歸鼎代表將游離能量聚於下丹田核心。",
@@ -805,7 +786,7 @@
             currentActiveChapterIndex = index;
             const ch = videoChaptersData[index];
 
-            // 更新嵌入式 Iframe 影片連結 (保持無縫內嵌)
+            // 更新嵌入式 Iframe 影片連結 (保持無縫內嵌，同時套用 CSS 裁剪)
             const videoIframe = document.getElementById('embedded-video-player');
             videoIframe.src = ch.url;
 
@@ -1000,7 +981,7 @@
                     utilityText = "對抗慢性倦怠、提升日間能量與專注度";
                 } else if (arr.includes('quma') && arr.includes('auto')) {
                     danTitle = "Mito Night Repair (Renew)";
-                    danDescription = "夜間修復重置。採用專利 **QuMA** 配方，NMN、煙醯胺、神經醯胺，引導細胞層面深層修復。";
+                    danDescription = "夜間修復重置。採用專利 **QuMA** 配方，NMN、煙醯胺、神經醯胺，引導深層修復。";
                     attributeValue = "+95.2%";
                     utilityText = "改善睡眠品質、夜間屏障重建、深度解毒";
                 } else if (arr.includes('data') && arr.includes('story')) {
@@ -1012,7 +993,7 @@
                     danTitle = "太微科碼自動散";
                     danDescription = "融合太乙自動化架構。修真大綱、影片片段與千部古籍自動建立超連結交互索引，配合 **QuMA** 生技，解放神識，免去凡人查詢之苦。";
                     attributeValue = "+93.8%";
-                    utilityText = "全流程多維生技資訊無損流轉與精準檢索";
+                    utilityText = "全流程 CI/CD，釋放勞動枷鎖";
                 }
 
                 document.getElementById('dan-name').innerText = danTitle;
