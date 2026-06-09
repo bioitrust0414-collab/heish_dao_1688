@@ -138,21 +138,43 @@
             background-image: radial-gradient(circle at 10% 20%, rgba(28, 26, 23, 0.03) 0%, transparent 60%),
                               radial-gradient(circle at 90% 80%, rgba(195, 155, 75, 0.05) 0%, transparent 50%);
         }
+
+        /* 影片視埠高精密雙向裁切 (遮蔽飛書麵包屑、頂部欄及右側工具列) */
+        .video-trim-container {
+            position: relative;
+            width: 100%;
+            padding-top: 56.25%; /* 16:9 黃金比例保持 */
+            overflow: hidden;
+            border-radius: 8px;
+            background-color: #000;
+            border: 1px solid rgba(195, 155, 75, 0.3);
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.8);
+        }
+
+        .video-trim-container iframe {
+            position: absolute !important;
+            /* 向上推送 74px 遮蔽頂部麵包屑與分享按鈕；向左拉伸並往右推送 48px 遮蔽右側飛書操作欄 */
+            top: -74px !important;
+            left: 0 !important;
+            width: calc(100% + 48px) !important;
+            height: calc(100% + 74px) !important;
+            border: none !important;
+            z-index: 10;
+        }
     </style>
 </head>
 <body class="overflow-x-hidden relative paper-grid ink-splash-bg">
 
     <canvas id="particle-canvas"></canvas>
 
-    <!-- 古典導覽欄 -->
-    <nav class="fixed w-full z-50 px-4 md:px-12 py-4 flex justify-between items-center bg-[#f9f6ef]/85 backdrop-blur-md border-b border-[#c39b4b]/20">
-        <div class="flex items-center space-x-3">
-            <div class="w-2 h-2 bg-[#b22d25] rounded-full shadow-[0_0_8px_#b22d25] animate-ping"></div>
-            <div class="text-xl md:text-2xl font-tao tao-text tracking-[0.2em]">謝天地的修道世界</div>
+    <nav class="fixed w-full z-50 px-4 md:px-8 lg:px-12 py-4 flex justify-between items-center bg-[#f9f6ef]/90 backdrop-blur-md border-b border-[#c39b4b]/20">
+        <div class="flex items-center space-x-3 shrink-0">
+            <div class="w-2.5 h-2.5 bg-[#b22d25] rounded-full shadow-[0_0_8px_#b22d25] animate-ping"></div>
+            <div class="text-lg md:text-2xl font-tao tao-text tracking-[0.15em] md:tracking-[0.2em] whitespace-nowrap">謝天地的修道世界</div>
         </div>
         
-        <!-- 桌機版竹簡選單 -->
-        <div class="hidden md:flex items-center space-x-10 text-[13px] tracking-[0.25em] font-medium text-[#3d3a35]">
+        <!-- 桌機版竹簡選單 (調整為 lg 以上顯示，防止中等螢幕擠壓跑版) -->
+        <div class="hidden lg:flex items-center space-x-6 xl:space-x-8 text-[11px] xl:text-[12px] tracking-[0.15em] xl:tracking-[0.25em] font-medium text-[#3d3a35] whitespace-nowrap">
             <a href="#home" class="hover:text-[#b22d25] transition-all duration-300">入室 / HOME</a>
             <a href="#video-audit" class="hover:text-[#b22d25] transition-all duration-300">經緯勾稽 / VIDEOS</a>
             <a href="#xingming" class="hover:text-[#b22d25] transition-all duration-300">性命雙修 / MERIDIAN</a>
@@ -161,8 +183,8 @@
             <a href="#contact" class="hover:text-[#b22d25] transition-all duration-300">傳書 / LINK</a>
         </div>
 
-        <!-- 手機版選單按鈕 -->
-        <div class="flex items-center space-x-4 md:hidden z-50">
+        <!-- 手機及平板版選單按鈕 (lg以下皆採用高相容性漢堡選單) -->
+        <div class="flex items-center lg:hidden z-50">
             <button id="menu-btn" class="flex flex-col justify-between h-4 w-5 focus:outline-none">
                 <span class="h-[2px] w-full bg-[#1c1a17] transition-all duration-300 transform" id="line1"></span>
                 <span class="h-[2px] w-full bg-[#1c1a17] transition-all duration-300" id="line2"></span>
@@ -181,7 +203,6 @@
         <a href="#contact" class="hover:text-[#b22d25] transition duration-300">傳書 / LINK</a>
     </div>
 
-    <!-- 歡迎區 -->
     <section id="home" class="min-h-screen flex flex-col justify-center items-center px-4 relative z-10 pt-24 text-center">
         <div class="space-y-6 max-w-4xl relative">
             <!-- 古典水墨印章裝飾 -->
@@ -189,13 +210,13 @@
                 <div class="cinnabar-stamp w-12 h-12 flex items-center justify-center text-xs font-bold font-tao rounded-md">謝天地</div>
             </div>
             
-            <h2 class="text-xs md:text-sm tracking-[0.8em] text-[#b22d25] font-bold uppercase pt-4">大師丹心心傳 • 經典與現代QuMA生物科技對照網</h2>
-            <h1 class="text-4xl md:text-7xl font-tao mb-6 tao-text leading-tight select-none tracking-widest">
+            <h2 class="text-xs md:text-sm tracking-[0.6em] md:tracking-[0.8em] text-[#b22d25] font-bold uppercase pt-4">大師丹心心傳 • 經典與現代QuMA生物科技對照網</h2>
+            <h1 class="text-3xl md:text-6xl lg:text-7xl font-tao mb-6 tao-text leading-tight select-none tracking-widest">
                 謝天地的修道世界
             </h1>
             <div class="cinnabar-line w-40 mx-auto my-6"></div>
             
-            <p class="max-w-2xl mx-auto text-[#3d3a35]/90 leading-relaxed text-sm md:text-lg px-6 tracking-[0.18em] font-light">
+            <p class="max-w-2xl mx-auto text-[#3d3a35]/90 leading-relaxed text-xs md:text-base px-6 tracking-[0.15em] md:tracking-[0.18em] font-light">
                 解構古法修真口訣，探析生命抗衰密碼。此處非世俗診所，亦非虛妄迷信之境，而是以古今道學為引、以現代 **QuMA** 生物能為論證之本源自愈學說。大師真火授課，多維經緯連動，助您撥開迷霧，通達神明。
             </p>
         </div>
@@ -206,14 +227,13 @@
         </div>
     </section>
 
-    <!-- 影片經緯勾稽核心面板 -->
-    <section id="video-audit" class="py-24 px-4 md:px-12 max-w-7xl mx-auto relative z-10">
-        <div class="text-center mb-16">
+    <section id="video-audit" class="py-20 px-4 md:px-8 lg:px-12 max-w-7xl mx-auto relative z-10">
+        <div class="text-center mb-12">
             <span class="text-xs tracking-[0.6em] text-[#b22d25] font-bold uppercase">TAO VIDEO AUDIT COMMAND CENTER</span>
-            <h3 class="text-3xl md:text-5xl font-tao mt-3 text-[#1c1a17]">修道視界 • 影音經緯連動鏡</h3>
+            <h3 class="text-2xl md:text-4xl lg:text-5xl font-tao mt-3 text-[#1c1a17]">修道視界 • 影音經緯連動鏡</h3>
             <div class="cinnabar-line w-32 mx-auto mt-6"></div>
-            <p class="text-sm text-[#3d3a35]/80 mt-4 max-w-3xl mx-auto font-light">
-                點擊下方修真講授章節，進行實時經緯勾稽。謝天地大師授課原片已直接**內嵌嵌入**於下方視窗中，與古卷修真祕方、松果體/腦波等 **QuMA** 現代科學理論同頻對照。
+            <p class="text-xs md:text-sm text-[#3d3a35]/80 mt-4 max-w-3xl mx-auto font-light">
+                點擊下方修真講授章節，進行實時經緯勾稽。謝天地大師授課原片已直接**安全嵌入**於下方視窗中（已運用經緯裁切法，隱藏飛書雜亂元件），與古卷修真祕方、腦波等 **QuMA** 現代科學理論同頻對照。
             </p>
         </div>
 
@@ -221,13 +241,13 @@
             
             <!-- 左側：竹簡風格大綱選擇 (4/12) -->
             <div class="lg:col-span-4 flex flex-col">
-                <div class="tao-border p-6 rounded-xl flex-1 flex flex-col bg-white/90">
+                <div class="tao-border p-5 md:p-6 rounded-xl flex-1 flex flex-col bg-white/90">
                     <h4 class="text-lg font-bold text-[#b22d25] mb-4 border-b border-[#c39b4b]/20 pb-3 flex items-center justify-between font-tao tracking-widest">
                         <span>修道授課經緯大綱</span>
                         <i class="fa-solid fa-feather-pointed text-[#c39b4b]"></i>
                     </h4>
                     
-                    <div class="space-y-4 overflow-y-auto max-h-[500px] pr-2 flex-1" id="video-chapters-container">
+                    <div class="space-y-4 overflow-y-auto max-h-[480px] pr-2 flex-1" id="video-chapters-container">
                         <!-- 由 JS 動態渲染竹簡卡片 -->
                     </div>
                 </div>
@@ -235,15 +255,13 @@
 
             <!-- 右側：高雅水墨風格內嵌播放器與勾稽結果 (8/12) -->
             <div class="lg:col-span-8 flex flex-col space-y-6">
-                <!-- 嵌入式播放器容器 (套用 CSS Clip 機制排除飛書頂部工具列) -->
-                <div class="tao-border p-5 rounded-xl bg-[#faf8f3] border-[#c39b4b]/40">
+                <!-- 嵌入式播放器容器 (套用 CSS Clip 機制排除飛書頂部及右邊工具列) -->
+                <div class="tao-border p-4 md:p-5 rounded-xl bg-[#faf8f3] border-[#c39b4b]/40">
                     
-                    <div class="relative w-full aspect-video rounded-lg overflow-hidden bg-black border border-[#c39b4b]/20 shadow-inner">
-                        <!-- 嵌入式 iFrame (將頂部欄往外推出 60px 達到完美乾淨的影片呈現) -->
+                    <div class="video-trim-container">
+                        <!-- 嵌入式 iFrame (進行高精準雙向剪裁) -->
                         <iframe 
                             id="embedded-video-player"
-                            class="absolute left-0 w-full z-10 bg-black"
-                            style="top: -60px; height: calc(100% + 60px); border: none;"
                             src="https://jjps7upfcrv0.jp.larksuite.com/file/QclUb5ZjnoAZwBxLqr2jlKZZpee?from=from_copylink" 
                             allowfullscreen 
                             sandbox="allow-scripts allow-same-origin allow-presentation allow-forms"
@@ -254,7 +272,7 @@
 
                     <!-- 即時字幕與玄門解析 -->
                     <div class="w-full text-center py-4 px-6 bg-white/95 rounded border border-[#c39b4b]/30 mt-4 shadow-sm relative">
-                        <p class="text-[10px] text-gray-400 tracking-widest uppercase">當前章節真言 / SPOKEN WORDS</p>
+                        <p class="text-[10px] text-[#c39b4b] tracking-widest uppercase font-bold">當前章節真言 / SPOKEN WORDS</p>
                         <p class="text-sm md:text-base text-[#1c1a17] font-tao mt-1.5 leading-relaxed" id="live-subtitle">
                             「玄關一竅，不在內，不在外，亦在心腎與大腦的神妙交會之處。」
                         </p>
@@ -264,8 +282,8 @@
                     <div class="grid md:grid-cols-2 gap-4 mt-4">
                         
                         <!-- 經典勾稽 -->
-                        <div class="p-5 rounded-lg border border-[#c39b4b]/30 bg-white/70 relative">
-                            <span class="absolute top-2 right-3 text-[9px] font-mono text-[#c39b4b] uppercase tracking-widest">古籍經緯</span>
+                        <div class="p-4 rounded-lg border border-[#c39b4b]/30 bg-white/70 relative">
+                            <span class="absolute top-2 right-3 text-[9px] font-mono text-[#c39b4b] uppercase tracking-widest font-bold">古籍經緯</span>
                             <h5 class="text-sm font-bold text-[#b22d25] mb-2 flex items-center space-x-2 font-tao">
                                 <i class="fa-solid fa-scroll"></i>
                                 <span id="audit-classic-title">《道德經・玄關章》</span>
@@ -276,8 +294,8 @@
                         </div>
 
                         <!-- 現代科學與QuMA技術勾稽 -->
-                        <div class="p-5 rounded-lg border border-[#b22d25]/20 bg-white/70 relative">
-                            <span class="absolute top-2 right-3 text-[9px] font-mono text-[#b22d25] uppercase tracking-widest">QuMA 生技</span>
+                        <div class="p-4 rounded-lg border border-[#b22d25]/20 bg-white/70 relative">
+                            <span class="absolute top-2 right-3 text-[9px] font-mono text-[#b22d25] uppercase tracking-widest font-bold">QuMA 生技</span>
                             <h5 class="text-sm font-bold text-[#c39b4b] mb-2 flex items-center space-x-2 font-tao">
                                 <i class="fa-solid fa-dna"></i>
                                 <span id="audit-science-title">松果體光敏感與電磁諧振</span>
@@ -292,17 +310,16 @@
         </div>
     </section>
 
-    <!-- 性命雙修 Section -->
-    <section id="xingming" class="py-24 px-6 max-w-6xl mx-auto relative z-10 border-t border-b border-[#c39b4b]/20">
+    <section id="xingming" class="py-24 px-4 md:px-6 max-w-6xl mx-auto relative z-10 border-t border-b border-[#c39b4b]/20">
         <div class="text-center mb-16">
             <span class="text-xs tracking-[0.6em] text-[#b22d25] font-bold uppercase">I. Nature & Life Dual Energy</span>
-            <h3 class="text-4xl md:text-5xl font-tao mt-3 text-[#1c1a17]">性命雙修：生物能與粒線體</h3>
+            <h3 class="text-3xl md:text-5xl font-tao mt-3 text-[#1c1a17]">性命雙修：生物能與粒線體</h3>
             <div class="cinnabar-line w-32 mx-auto mt-6"></div>
             <p class="text-sm text-[#3d3a35]/80 mt-4 max-w-3xl mx-auto font-light leading-relaxed">
                 「性」代表元神，「命」代表肉身。有別於世俗過度依賴侵入式針劑、強行干預肉體衰老，謝天地數位丹道宣導一套本源性自愈心法。我們以古籍經典為藥引，配合現代 **QuMA** 生物能科技，非侵入式自細胞深處喚醒命元，實現機體長效負熵。
             </p>
             
-            <div class="flex justify-center space-x-4 mt-8">
+            <div class="flex flex-wrap justify-center gap-3 mt-8">
                 <button onclick="setWaidanTab('diagnosis')" id="tab-btn-diagnosis" class="px-5 py-2 text-xs border border-[#b22d25] bg-[#b22d25] text-white font-bold rounded-full transition-all shadow-md">生命能脈絡</button>
                 <button onclick="setWaidanTab('downward')" id="tab-btn-downward" class="px-5 py-2 text-xs border border-[#c39b4b]/30 text-[#c39b4b] rounded-full hover:bg-[#c39b4b]/10 transition-all font-bold">技術下放</button>
                 <button onclick="setWaidanTab('anchors')" id="tab-btn-anchors" class="px-5 py-2 text-xs border border-[#c39b4b]/30 text-[#c39b4b] rounded-full hover:bg-[#c39b4b]/10 transition-all font-bold">科學錨點</button>
@@ -310,32 +327,32 @@
         </div>
 
         <!-- 互動分頁一：經絡經氣（粒線體異常病徵診斷） -->
-        <div id="waidan-tab-diagnosis" class="grid md:grid-cols-12 gap-12 items-center">
+        <div id="waidan-tab-diagnosis" class="grid md:grid-cols-12 gap-8 lg:gap-12 items-center">
             
             <!-- 經絡互動圖 -->
-            <div class="md:col-span-6 flex flex-col items-center justify-center relative bg-white/70 p-8 rounded-xl border border-[#c39b4b]/20">
+            <div class="md:col-span-6 flex flex-col items-center justify-center relative bg-white/70 p-6 md:p-8 rounded-xl border border-[#c39b4b]/20">
                 <span class="text-[10px] text-[#c39b4b] uppercase tracking-[0.25em] mb-4 text-center font-bold">點擊身體能量節點 診斷粒線體異常病徵</span>
                 
-                <div class="relative w-72 h-72 flex items-center justify-center">
+                <div class="relative w-64 h-64 md:w-72 md:h-72 flex items-center justify-center">
                     <!-- 水墨經絡太極背景 -->
-                    <svg class="w-60 h-60 text-[#b22d25]/10 animate-[pulse_4s_infinite_ease-in-out]" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <svg class="w-56 h-56 md:w-60 md:h-60 text-[#b22d25]/10 animate-[pulse_4s_infinite_ease-in-out]" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="100" cy="100" r="85" stroke="currentColor" stroke-width="1" stroke-dasharray="3 3"/>
                         <path d="M100 15C53.1 15 15 53.1 15 100C15 146.9 53.1 185 100 185C146.9 185 185 146.9 185 100" stroke="#b22d25" stroke-width="1.5" stroke-linecap="round"/>
                         <path d="M100 15C125 45 125 155 100 185" stroke="#c39b4b" stroke-width="1" stroke-dasharray="2 2"/>
                     </svg>
 
                     <!-- 四大穴位點 -->
-                    <button onclick="showMitoFact('brain')" class="absolute top-6 left-1/2 -translate-x-1/2 bg-white border border-[#b22d25] hover:bg-[#b22d25] text-xs px-3 py-1.5 rounded-full text-[#b22d25] hover:text-white transition-all shadow-sm z-20 font-tao">
+                    <button onclick="showMitoFact('brain')" class="absolute top-6 left-1/2 -translate-x-1/2 bg-white border border-[#b22d25] hover:bg-[#b22d25] text-[11px] px-2.5 py-1.5 rounded-full text-[#b22d25] hover:text-white transition-all shadow-sm z-20 font-tao whitespace-nowrap">
                         🧠 頂輪 (大腦神識)
                     </button>
-                    <button onclick="showMitoFact('heart')" class="absolute top-1/2 left-10 -translate-y-1/2 bg-white border border-[#b22d25] hover:bg-[#b22d25] text-xs px-3 py-1.5 rounded-full text-[#b22d25] hover:text-white transition-all shadow-sm z-20 font-tao">
-                        🫀 中丹田 (絳宮心臟)
+                    <button onclick="showMitoFact('heart')" class="absolute top-1/2 left-4 md:left-8 -translate-y-1/2 bg-white border border-[#b22d25] hover:bg-[#b22d25] text-[11px] px-2.5 py-1.5 rounded-full text-[#b22d25] hover:text-white transition-all shadow-sm z-20 font-tao whitespace-nowrap">
+                        🫀 中丹田
                     </button>
-                    <button onclick="showMitoFact('muscle')" class="absolute top-1/2 right-6 -translate-y-1/2 bg-white border border-[#b22d25] hover:bg-[#b22d25] text-xs px-3 py-1.5 rounded-full text-[#b22d25] hover:text-white transition-all shadow-sm z-20 font-tao">
-                        💪 氣血 (周身骨骼肌)
+                    <button onclick="showMitoFact('muscle')" class="absolute top-1/2 right-4 md:right-6 -translate-y-1/2 bg-white border border-[#b22d25] hover:bg-[#b22d25] text-[11px] px-2.5 py-1.5 rounded-full text-[#b22d25] hover:text-white transition-all shadow-sm z-20 font-tao whitespace-nowrap">
+                        💪 氣血 (骨骼肌)
                     </button>
-                    <button onclick="showMitoFact('metabolism')" class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white border border-[#b22d25] hover:bg-[#b22d25] text-xs px-3 py-1.5 rounded-full text-[#b22d25] hover:text-white transition-all shadow-sm z-20 font-tao">
-                        🪴 下丹田 (炁海肝腎)
+                    <button onclick="showMitoFact('metabolism')" class="absolute bottom-6 left-1/2 -translate-x-1/2 bg-white border border-[#b22d25] hover:bg-[#b22d25] text-[11px] px-2.5 py-1.5 rounded-full text-[#b22d25] hover:text-white transition-all shadow-sm z-20 font-tao whitespace-nowrap">
+                        🪴 下丹田 (炁海)
                     </button>
 
                     <div class="absolute w-12 h-12 rounded-full bg-gradient-to-r from-[#c39b4b] to-[#b22d25] opacity-20 blur-md"></div>
@@ -345,22 +362,22 @@
 
             <!-- 診斷說明卡 (宣紙木刻板風) -->
             <div class="md:col-span-6 space-y-6">
-                <div id="mito-info-box" class="tao-border p-8 rounded-xl min-h-[250px] flex flex-col justify-center bg-white/95">
+                <div id="mito-info-box" class="tao-border p-6 md:p-8 rounded-xl min-h-[250px] flex flex-col justify-center bg-white/95">
                     
                     <div id="mito-placeholder" class="text-left">
                         <h4 class="text-xl font-bold text-[#b22d25] mb-4 font-tao tracking-widest">點擊左側生命脈絡結點</h4>
                         <p class="text-sm text-[#3d3a35] leading-relaxed font-light">
                             探索人體內部元氣發動機——「粒線體」的運作密碼。
-                            了解當細胞真氣（ATP）虧損時，身體將發出哪些求求信號，而我們如何通過 **QuMA** 現代外丹能予以校準重構。
+                            了解當細胞真氣（ATP）虧損時，身體將發出哪些求救信號，而我們如何通過 **QuMA** 現代外丹能予以校準重構。
                         </p>
                     </div>
 
                     <!-- 大腦資訊 -->
                     <div id="mito-brain" class="hidden space-y-4 text-left">
                         <span class="text-xs font-mono text-[#b22d25] tracking-widest uppercase font-bold">Mitochondrial Dysfunction / Brain</span>
-                        <h4 class="text-2xl font-bold text-[#c39b4b] font-tao tracking-widest">神識受阻：大腦與神經衰變</h4>
+                        <h4 class="text-xl md:text-2xl font-bold text-[#c39b4b] font-tao tracking-widest">神識受阻：大腦與神經衰變</h4>
                         <p class="text-sm text-[#3d3a35] leading-relaxed font-light">
-                            大腦雖然僅佔體重的 2%，卻消耗了全身 20% 的 ATP 能量。當粒線體供能不足，會導致神經髓鞘退化。臨床表現為：偏頭痛、精神衰弱、抽搐、失智、認知功能失調。
+                            大腦雖然僅佔體重的 2%，卻消耗了全身 20% 的 ATP 能量。當粒線體供能不足，會導致神經髓鞘退化。臨床表現為：偏頭痛、精神衰弱、失智、認知功能失調。
                         </p>
                         <div class="border-t border-[#c39b4b]/20 pt-4 text-xs text-[#b22d25]">
                             <span class="font-bold">QuMA 外丹解：</span> <span class="text-[#3d3a35]">以高能 QuMA 訊號調頻，活化腦源性神經營養因子 (BDNF)，修復突觸。</span>
@@ -370,9 +387,9 @@
                     <!-- 心臟資訊 -->
                     <div id="mito-heart" class="hidden space-y-4 text-left">
                         <span class="text-xs font-mono text-[#b22d25] tracking-widest uppercase font-bold">Mitochondrial Dysfunction / Heart</span>
-                        <h4 class="text-2xl font-bold text-[#c39b4b] font-tao tracking-widest">心陽不振：心肌傳導與病變</h4>
+                        <h4 class="text-xl md:text-2xl font-bold text-[#c39b4b] font-tao tracking-widest">心陽不振：心肌傳導與病變</h4>
                         <p class="text-sm text-[#3d3a35] leading-relaxed font-light">
-                            心臟需要全天候不間斷跳動，對 ATP 的依賴度極高。粒線體異常會造成心肌纖維化、ATP 生成斷崖式下跌，引發：心肌傳導障礙、心肌病變、以及預激綜合症（WPW）。
+                            心臟需要全天候不間斷跳動，對 ATP 的依賴度極高。粒線體異常會造成心肌纖維化、ATP 生成斷崖式下跌，引發心肌傳導障礙與預激綜合症（WPW）。
                         </p>
                         <div class="border-t border-[#c39b4b]/20 pt-4 text-xs text-[#b22d25]">
                             <span class="font-bold">QuMA 外丹解：</span> <span class="text-[#3d3a35]">利用 QuMA 高吸收率機制優化心肌細胞電子傳遞鏈，提高心肌耐缺氧度。</span>
@@ -382,9 +399,9 @@
                     <!-- 肌肉資訊 -->
                     <div id="mito-muscle" class="hidden space-y-4 text-left">
                         <span class="text-xs font-mono text-[#b22d25] tracking-widest uppercase font-bold">Mitochondrial Dysfunction / Muscle</span>
-                        <h4 class="text-2xl font-bold text-[#c39b4b] font-tao tracking-widest">形骸虛無：骨骼肌萎縮與疲勞</h4>
+                        <h4 class="text-xl md:text-2xl font-bold text-[#c39b4b] font-tao tracking-widest">形骸虛無：骨骼肌萎縮與疲勞</h4>
                         <p class="text-sm text-[#3d3a35] leading-relaxed font-light">
-                            骨骼肌是人體運動的主力。粒線體網絡重構（Fusion and Fission）障礙會導致活性氧（ROS）自由基過量端積，撕裂肌纖維，表現為：慢性虛弱、重症疲勞、肌肉萎縮及神經肌肉病變。
+                            骨骼肌是人體運動的主力。粒線體網絡重構障礙會導致活性氧（ROS）自由基過量囤積，撕裂肌纖維，表現為慢性虛弱、肌肉萎縮及神經肌肉病變。
                         </p>
                         <div class="border-t border-[#c39b4b]/20 pt-4 text-xs text-[#b22d25]">
                             <span class="font-bold">QuMA 外丹解：</span> <span class="text-[#3d3a35]">促進粒線體新生融合，重構高強度肌肉動能與抗氧化屏障。</span>
@@ -394,9 +411,9 @@
                     <!-- 代謝資訊 -->
                     <div id="mito-metabolism" class="hidden space-y-4 text-left">
                         <span class="text-xs font-mono text-[#b22d25] tracking-widest uppercase font-bold">Mitochondrial Dysfunction / Organs</span>
-                        <h4 class="text-2xl font-bold text-[#c39b4b] font-tao tracking-widest">九臟失調：代謝衰退與病變</h4>
+                        <h4 class="text-xl md:text-2xl font-bold text-[#c39b4b] font-tao tracking-widest">九臟失調：代謝衰退與病變</h4>
                         <p class="text-sm text-[#3d3a35] leading-relaxed font-light">
-                            肝臟、胰臟與腎臟是過濾、代謝與解毒的中樞。粒線體呼吸作用中斷會引發胰島素抵抗、肝臟纖維化與假性阻塞，衍生為：糖尿病、肝硬化、尿毒及 Fanconi 氏症候群。
+                            肝臟、胰臟與腎臟是過濾、代謝與解毒的中樞。粒線體呼吸作用中斷會引發胰島素抵抗，衍生為糖尿病、肝硬化、尿毒及腎小管功能障礙。
                         </p>
                         <div class="border-t border-[#c39b4b]/20 pt-4 text-xs text-[#b22d25]">
                             <span class="font-bold">QuMA 外丹解：</span> <span class="text-[#3d3a35]">QuMA 靶向輸送技術可抑制器官脂質過氧化，重構全身能量負熵環。</span>
@@ -408,7 +425,7 @@
 
         <!-- 互動分頁二：技術下放對比 -->
         <div id="waidan-tab-downward" class="hidden max-w-4xl mx-auto">
-            <div class="tao-border p-8 md:p-12 rounded-xl text-left space-y-8 bg-white/95">
+            <div class="tao-border p-6 md:p-12 rounded-xl text-left space-y-8 bg-white/95">
                 <h4 class="text-2xl md:text-3xl font-tao text-[#b22d25] tracking-widest">從功能醫學診所，到日常居家自主管理</h4>
                 <p class="text-sm text-[#3d3a35] leading-relaxed font-light">
                     傳統上，系統性活化粒線體與補充 NAD+ 依賴昂貴且具侵入性的靜脈點滴。MitoActiveLife 通過 **QuMA™** 多重靶向導航機制，將其下放為可量化的非侵入式口服與外用系統。
@@ -416,12 +433,12 @@
                 <div class="grid md:grid-cols-2 gap-6 pt-4 border-t border-[#c39b4b]/20">
                     <div class="p-6 bg-[#eae4d5]/50 rounded-lg border border-[#b22d25]/20">
                         <span class="text-xs font-bold text-[#b22d25] uppercase tracking-wider">診所 IV NAD+ 點滴</span>
-                        <div class="text-3xl font-bold text-[#1c1a17] my-2 font-mono">NT$16,000 - $30,000+</div>
+                        <div class="text-2xl md:text-3xl font-bold text-[#1c1a17] my-2 font-mono">NT$16,000 - $30,000+</div>
                         <p class="text-xs text-[#3d3a35]/70 font-light">靜脈扎針、需排診請假，高成本、難以長期持續</p>
                     </div>
                     <div class="p-6 bg-white rounded-lg border border-[#c39b4b] pulse-gold">
                         <span class="text-xs font-bold text-[#c39b4b] uppercase tracking-wider">MitoActiveLife QuMA™ 系統</span>
-                        <div class="text-3xl font-bold text-[#b22d25] my-2 font-mono">NT$5,833 <span class="text-xs font-normal">/ 90-Day Reset</span></div>
+                        <div class="text-2xl md:text-3xl font-bold text-[#b22d25] my-2 font-mono">NT$5,833 <span class="text-xs font-normal">/ 90-Day Reset</span></div>
                         <p class="text-xs text-[#3d3a35] font-light">居家口服與外用系統，隨附 90 天健康自評追蹤與個人化趨勢報告</p>
                     </div>
                 </div>
@@ -431,16 +448,16 @@
         <!-- 互動分頁三：科學錨點 -->
         <div id="waidan-tab-anchors" class="hidden max-w-4xl mx-auto">
             <div class="grid md:grid-cols-2 gap-8">
-                <div class="tao-border p-8 rounded-xl text-left bg-white/95">
+                <div class="tao-border p-6 md:p-8 rounded-xl text-left bg-white/95">
                     <span class="text-xs font-mono text-[#b22d25] tracking-widest uppercase font-bold">ANCHOR I</span>
-                    <h4 class="text-xl font-bold text-[#c39b4b] mt-2 mb-4 font-tao tracking-widest">2009 諾貝爾生理醫學獎</h4>
+                    <h4 class="text-lg md:text-xl font-bold text-[#c39b4b] mt-2 mb-4 font-tao tracking-widest">2009 諾貝爾生理醫學獎</h4>
                     <p class="text-xs text-[#3d3a35] leading-relaxed font-light">
                         Elizabeth Blackburn 等科學家因發現端粒與端粒酶保護染色體之機制，榮獲諾貝爾獎，奠定了端粒為細胞老化關鍵科學框架的基石。
                     </p>
                 </div>
-                <div class="tao-border p-8 rounded-xl text-left bg-white/95">
+                <div class="tao-border p-6 md:p-8 rounded-xl text-left bg-white/95">
                     <span class="text-xs font-mono text-[#b22d25] tracking-widest uppercase font-bold">ANCHOR II</span>
-                    <h4 class="text-xl font-bold text-[#c39b4b] mt-2 mb-4 font-tao tracking-widest">哈佛大衛·辛克萊先驅研究</h4>
+                    <h4 class="text-lg md:text-xl font-bold text-[#c39b4b] mt-2 mb-4 font-tao tracking-widest">哈佛大衛·辛克萊先驅研究</h4>
                     <p class="text-xs text-[#3d3a35] leading-relaxed font-light">
                         推動 NMN 從實驗室走向主流，論證了提升細胞內 NAD+ 水平對活化 Sirtuin (去乙醯化酶) 基因及長壽路徑的核心關聯。
                     </p>
@@ -449,12 +466,11 @@
         </div>
     </section>
 
-    <!-- QuMA Section -->
     <section id="quma" class="py-24 bg-white/90 relative z-10">
-        <div class="max-w-6xl mx-auto px-6">
+        <div class="max-w-6xl mx-auto px-4 md:px-6">
             <div class="text-center mb-16">
                 <span class="text-xs tracking-[0.6em] text-[#b22d25] font-bold uppercase">II. QuMA & Modern Crucible</span>
-                <h3 class="text-4xl md:text-5xl font-tao mt-3 text-[#1c1a17]">QuMA：現代外丹與量子燒結</h3>
+                <h3 class="text-3xl md:text-5xl font-tao mt-3 text-[#1c1a17]">QuMA：現代外丹與量子燒結</h3>
                 <div class="cinnabar-line w-32 mx-auto mt-6"></div>
                 <p class="text-sm text-[#3d3a35]/80 mt-4 max-w-3xl mx-auto font-light leading-relaxed">
                     **QuMA** 是現代生物科技煉丹技術的中心。引進【MitoActiveLife 活『粒』生活】之『七重金丹路徑』，將有機複合鈣、D3吸收閘門、輔酶Q10等活性分子與『MDSNV燕窩酸奈米囊』精準遞送系統融合，再注入「謝天地大師修真法音影片數據」進行分子級量子複方一體燒結。
@@ -464,9 +480,9 @@
             <!-- 產品簡介 -->
             <div class="grid md:grid-cols-2 gap-8 mb-16 text-left">
                 <!-- 內服線 -->
-                <div class="tao-border p-8 rounded-xl space-y-6 bg-[#faf8f3]">
+                <div class="tao-border p-6 md:p-8 rounded-xl space-y-6 bg-[#faf8f3]">
                     <span class="text-xs font-mono text-[#b22d25] tracking-widest uppercase font-bold">INTERNAL COMPOSITION</span>
-                    <h4 class="text-2xl font-bold text-[#c39b4b] font-tao tracking-widest">QuMA™ 內服系統</h4>
+                    <h4 class="text-xl md:text-2xl font-bold text-[#c39b4b] font-tao tracking-widest">QuMA™ 內服系統</h4>
                     <ul class="space-y-4 text-sm text-[#3d3a35]">
                         <li class="font-light">• <strong class="text-[#b22d25] font-bold font-tao">Mito Core Daily (Sustain):</strong> 日間粒線體能量管理。專利 **QuMA** 生技配方，活化粒線體機能。維持高能續航。</li>
                         <li class="font-light">• <strong class="text-[#b22d25] font-bold font-tao">Mito Night Repair (Renew):</strong> 夜間修復重置。專利 **QuMA** 配方，NMN、煙醯胺、神經醯胺，引導深層修復。</li>
@@ -474,9 +490,9 @@
                 </div>
 
                 <!-- 外用線 -->
-                <div class="tao-border p-8 rounded-xl space-y-6 bg-[#faf8f3]">
+                <div class="tao-border p-6 md:p-8 rounded-xl space-y-6 bg-[#faf8f3]">
                     <span class="text-xs font-mono text-[#b22d25] tracking-widest uppercase font-bold">TOPICAL SYNERGY</span>
-                    <h4 class="text-2xl font-bold text-[#c39b4b] font-tao tracking-widest">QuMA™ 外用屏障</h4>
+                    <h4 class="text-xl md:text-2xl font-bold text-[#c39b4b] font-tao tracking-widest">QuMA™ 外用屏障</h4>
                     <ul class="space-y-4 text-sm text-[#3d3a35]">
                         <li class="font-light">• <strong class="text-[#b22d25] font-bold font-tao">Mito Core Daily Serum:</strong> 日間肌膚能量精華。**QuMA** 導航NMN、煙醯胺、神經醯胺。抵抗光老化屏障。</li>
                         <li class="font-light">• <strong class="text-[#b22d25] font-bold font-tao">Mito Night Repair Cream:</strong> 夜間密集修護霜。NMN、胜肽、角鯊烷。深度屏障重建。</li>
@@ -592,12 +608,11 @@
         </div>
     </section>
 
-    <!-- 九步修仙 Section -->
     <section id="ascension" class="py-24 bg-[#faf8f3]/60 border-t border-[#c39b4b]/20 relative z-10">
-        <div class="max-w-6xl mx-auto px-6">
+        <div class="max-w-6xl mx-auto px-4 md:px-6">
             <div class="text-center mb-16">
                 <span class="text-xs tracking-[0.6em] text-[#b22d25] font-bold uppercase">III. 9-Step Ascension Path</span>
-                <h3 class="text-4xl md:text-5xl font-tao mt-3 text-[#1c1a17]">九步修仙：內在丹道演算法</h3>
+                <h3 class="text-3xl md:text-5xl font-tao mt-3 text-[#1c1a17]">九步修仙：內在丹道演算法</h3>
                 <div class="cinnabar-line w-32 mx-auto mt-6"></div>
                 <p class="text-sm text-[#3d3a35]/80 mt-4 max-w-2xl mx-auto font-light leading-relaxed">
                     外用與內服皆為「外丹」之輔，欲求大道，需行「內丹九步修仙」。這是一套將古老修真法決解譯為現代生命進化與逆向增長的「負熵心法系統」。點擊竹簡，解密九步機要。
@@ -607,51 +622,51 @@
             <div class="grid md:grid-cols-12 gap-10 items-start">
                 
                 <!-- 九步法輪 (左 7 欄) -->
-                <div class="md:col-span-7 grid grid-cols-3 gap-4">
+                <div class="md:col-span-7 grid grid-cols-3 gap-3 md:gap-4">
                     <div onclick="selectAscensionStep(1)" class="asc-card group cursor-pointer p-4 rounded-xl border border-[#c39b4b]/30 bg-white hover:border-[#b22d25] transition-all text-center shadow-sm">
                         <span class="text-xs font-mono text-[#b22d25] font-bold block mb-1">STEP 01</span>
-                        <h5 class="text-lg font-tao text-[#3d3a35] group-hover:text-[#b22d25] transition-colors tracking-widest">築基煉己</h5>
+                        <h5 class="text-base md:text-lg font-tao text-[#3d3a35] group-hover:text-[#b22d25] transition-colors tracking-widest whitespace-nowrap">築基煉己</h5>
                     </div>
                     <div onclick="selectAscensionStep(2)" class="asc-card group cursor-pointer p-4 rounded-xl border border-[#c39b4b]/30 bg-white hover:border-[#b22d25] transition-all text-center shadow-sm">
                         <span class="text-xs font-mono text-[#b22d25] font-bold block mb-1">STEP 02</span>
-                        <h5 class="text-lg font-tao text-[#3d3a35] group-hover:text-[#b22d25] transition-colors tracking-widest">採藥歸鼎</h5>
+                        <h5 class="text-base md:text-lg font-tao text-[#3d3a35] group-hover:text-[#b22d25] transition-colors tracking-widest whitespace-nowrap">採藥歸鼎</h5>
                     </div>
                     <div onclick="selectAscensionStep(3)" class="asc-card group cursor-pointer p-4 rounded-xl border border-[#c39b4b]/30 bg-white hover:border-[#b22d25] transition-all text-center shadow-sm">
                         <span class="text-xs font-mono text-[#b22d25] font-bold block mb-1">STEP 03</span>
-                        <h5 class="text-lg font-tao text-[#3d3a35] group-hover:text-[#b22d25] transition-colors tracking-widest">乾坤交媾</h5>
+                        <h5 class="text-base md:text-lg font-tao text-[#3d3a35] group-hover:text-[#b22d25] transition-colors tracking-widest whitespace-nowrap">乾坤交媾</h5>
                     </div>
                     <div onclick="selectAscensionStep(4)" class="asc-card group cursor-pointer p-4 rounded-xl border border-[#c39b4b]/30 bg-white hover:border-[#b22d25] transition-all text-center shadow-sm">
                         <span class="text-xs font-mono text-[#b22d25] font-bold block mb-1">STEP 04</span>
-                        <h5 class="text-lg font-tao text-[#3d3a35] group-hover:text-[#b22d25] transition-colors tracking-widest">周天火候</h5>
+                        <h5 class="text-base md:text-lg font-tao text-[#3d3a35] group-hover:text-[#b22d25] transition-colors tracking-widest whitespace-nowrap">周天火候</h5>
                     </div>
                     <div onclick="selectAscensionStep(5)" class="asc-card group cursor-pointer p-4 rounded-xl border border-[#c39b4b]/30 bg-white hover:border-[#b22d25] transition-all text-center shadow-sm">
                         <span class="text-xs font-mono text-[#b22d25] font-bold block mb-1">STEP 05</span>
-                        <h5 class="text-lg font-tao text-[#3d3a35] group-hover:text-[#b22d25] transition-colors tracking-widest">玉液還丹</h5>
+                        <h5 class="text-base md:text-lg font-tao text-[#3d3a35] group-hover:text-[#b22d25] transition-colors tracking-widest whitespace-nowrap">玉液還丹</h5>
                     </div>
                     <div onclick="selectAscensionStep(6)" class="asc-card group cursor-pointer p-4 rounded-xl border border-[#c39b4b]/30 bg-white hover:border-[#b22d25] transition-all text-center shadow-sm">
                         <span class="text-xs font-mono text-[#b22d25] font-bold block mb-1">STEP 06</span>
-                        <h5 class="text-lg font-tao text-[#3d3a35] group-hover:text-[#b22d25] transition-colors tracking-widest">金液還丹</h5>
+                        <h5 class="text-base md:text-lg font-tao text-[#3d3a35] group-hover:text-[#b22d25] transition-colors tracking-widest whitespace-nowrap">金液還丹</h5>
                     </div>
                     <div onclick="selectAscensionStep(7)" class="asc-card group cursor-pointer p-4 rounded-xl border border-[#c39b4b]/30 bg-white hover:border-[#b22d25] transition-all text-center shadow-sm">
                         <span class="text-xs font-mono text-[#b22d25] font-bold block mb-1">STEP 07</span>
-                        <h5 class="text-lg font-tao text-[#3d3a35] group-hover:text-[#b22d25] transition-colors tracking-widest">脫胎神化</h5>
+                        <h5 class="text-base md:text-lg font-tao text-[#3d3a35] group-hover:text-[#b22d25] transition-colors tracking-widest whitespace-nowrap">脫胎神化</h5>
                     </div>
                     <div onclick="selectAscensionStep(8)" class="asc-card group cursor-pointer p-4 rounded-xl border border-[#c39b4b]/30 bg-white hover:border-[#b22d25] transition-all text-center shadow-sm">
                         <span class="text-xs font-mono text-[#b22d25] font-bold block mb-1">STEP 08</span>
-                        <h5 class="text-lg font-tao text-[#3d3a35] group-hover:text-[#b22d25] transition-colors tracking-widest">移神乾頂</h5>
+                        <h5 class="text-base md:text-lg font-tao text-[#3d3a35] group-hover:text-[#b22d25] transition-colors tracking-widest whitespace-nowrap">移神乾頂</h5>
                     </div>
                     <div onclick="selectAscensionStep(9)" class="asc-card group cursor-pointer p-4 rounded-xl border border-[#c39b4b]/30 bg-white hover:border-[#b22d25] transition-all text-center shadow-sm">
                         <span class="text-xs font-mono text-[#b22d25] font-bold block mb-1">STEP 09</span>
-                        <h5 class="text-lg font-tao text-[#3d3a35] group-hover:text-[#b22d25] transition-colors tracking-widest">虛空粉碎</h5>
+                        <h5 class="text-base md:text-lg font-tao text-[#3d3a35] group-hover:text-[#b22d25] transition-colors tracking-widest whitespace-nowrap">虛空粉碎</h5>
                     </div>
                 </div>
 
                 <!-- Central Decree Box (右 5 欄) -->
                 <div class="md:col-span-5 h-full">
-                    <div id="ascension-decree-box" class="tao-border p-8 rounded-xl min-h-[300px] flex flex-col justify-center text-left bg-white shadow-md relative overflow-hidden">
+                    <div id="ascension-decree-box" class="tao-border p-6 md:p-8 rounded-xl min-h-[300px] flex flex-col justify-center text-left bg-white shadow-md relative overflow-hidden">
                         <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#b22d25] to-transparent"></div>
                         <span class="text-xs font-mono text-[#b22d25] font-bold" id="decree-num">DECREE OF VOID</span>
-                        <h4 class="text-3xl font-tao text-[#1c1a17] my-4 tracking-widest" id="decree-title">玄門法決</h4>
+                        <h4 class="text-2xl md:text-3xl font-tao text-[#1c1a17] my-4 tracking-widest" id="decree-title">玄門法決</h4>
                         <p class="text-sm text-[#3d3a35] leading-relaxed font-light" id="decree-desc">
                             請點擊左側九步法輪中的修真步驟。
                             每一層皆對應著內丹術中真氣流轉的無上秘密，以及生命或商業系統的「負熵代碼升華」。
@@ -662,7 +677,6 @@
         </div>
     </section>
 
-    <!-- 頁尾 -->
     <footer id="contact" class="py-32 text-center relative z-10 border-t border-[#c39b4b]/20 bg-white/70">
         <div class="max-w-2xl mx-auto px-6">
             <h3 class="text-4xl font-tao mb-10 text-[#1c1a17] tracking-widest">傳書致意</h3>
@@ -786,7 +800,7 @@
             currentActiveChapterIndex = index;
             const ch = videoChaptersData[index];
 
-            // 更新嵌入式 Iframe 影片連結 (保持無縫內嵌，同時套用 CSS 裁剪)
+            // 更新嵌入式 Iframe 影片連結
             const videoIframe = document.getElementById('embedded-video-player');
             videoIframe.src = ch.url;
 
@@ -801,7 +815,7 @@
             showNotification(`已切換至大師講堂：【${ch.title}】`);
         }
 
-        // 手機版菜單切換
+        // 手機與平板漢堡選單控制
         const menuBtn = document.getElementById('menu-btn');
         const mobileMenu = document.getElementById('mobile-menu');
         const line1 = document.getElementById('line1');
