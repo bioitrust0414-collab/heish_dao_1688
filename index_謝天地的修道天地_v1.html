@@ -1,0 +1,1249 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>謝天地的修道世界 | 影片經緯勾稽與科碼生技系統</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=ZCOOL+XiaoWei&family=Noto+Serif+JP:wght@400;700&family=Noto+Serif+TC:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        :root {
+            --tao-gold: #d4b47a;
+            --tao-red: #a33b3b;
+            --tao-black: #0a0a0a;
+            --tao-ink: #1f1f1f;
+            --tao-paper: #f4f1de;
+            --tao-glow: rgba(212, 180, 122, 0.2);
+        }
+        
+        body {
+            background-color: var(--tao-black);
+            color: var(--tao-paper);
+            font-family: 'Noto Serif TC', 'Noto Serif JP', serif;
+            line-height: 1.8;
+            scroll-behavior: smooth;
+        }
+        
+        h1, h2, h3, h4, h5, h6, p, span, a, button, div, li {
+            font-family: 'Noto Serif TC', 'Noto Serif JP', serif;
+        }
+        
+        .font-tao { 
+            font-family: 'ZCOOL XiaoWei', 'Noto Serif TC', serif; 
+        }
+        
+        .tao-border {
+            border: 1px solid rgba(212, 180, 122, 0.25);
+            background: rgba(15, 15, 15, 0.85);
+            backdrop-filter: blur(12px);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.8);
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        
+        .tao-border:hover {
+            border-color: var(--tao-gold);
+            box-shadow: 0 0 30px rgba(212, 180, 122, 0.15);
+            transform: translateY(-4px);
+        }
+
+        .tao-text { 
+            color: var(--tao-gold);
+            text-shadow: 0 2px 10px rgba(212, 180, 122, 0.3);
+        }
+
+        .core-label {
+            color: rgba(244, 241, 222, 0.5);
+            text-shadow: 0 0 8px rgba(0, 0, 0, 0.9);
+            transition: all 0.5s ease;
+        }
+        .group:hover .core-label {
+            color: var(--tao-gold);
+            text-shadow: 0 0 15px rgba(212, 180, 122, 0.5);
+        }
+
+        .cinnabar-line {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--tao-red), transparent);
+        }
+
+        @keyframes golden-pulse {
+            0%, 100% { box-shadow: 0 0 15px rgba(212, 180, 122, 0.2); }
+            50% { box-shadow: 0 0 35px rgba(212, 180, 122, 0.5); }
+        }
+        .pulse-gold {
+            animation: golden-pulse 3s infinite ease-in-out;
+        }
+
+        @keyframes cauldron-shake {
+            0%, 100% { transform: rotate(0deg) scale(1); }
+            20% { transform: rotate(-3deg) scale(1.02); }
+            40% { transform: rotate(3deg) scale(1.02); }
+            60% { transform: rotate(-2deg) scale(1.05); }
+            80% { transform: rotate(2deg) scale(1.05); }
+        }
+        .shake-active {
+            animation: cauldron-shake 0.5s infinite ease-in-out;
+            border-color: var(--tao-red) !important;
+            box-shadow: 0 0 40px rgba(163, 59, 59, 0.6) !important;
+        }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--tao-black); }
+        ::-webkit-scrollbar-thumb { background: #2a2a2a; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: var(--tao-gold); }
+
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 1;
+            pointer-events: none;
+            opacity: 0.65;
+        }
+
+        .tech-grid {
+            background-image: linear-gradient(rgba(212, 180, 122, 0.03) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(212, 180, 122, 0.03) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+    </style>
+</head>
+<body class="overflow-x-hidden relative tech-grid">
+
+    <canvas id="particle-canvas"></canvas>
+
+    <nav class="fixed w-full z-50 px-4 md:px-12 py-5 flex justify-between items-center bg-[#0a0a0a]/90 backdrop-blur-md border-b border-[#d4b47a]/20">
+        <div class="flex items-center space-x-3">
+            <div class="w-3 h-3 bg-[#a33b3b] rounded-full shadow-[0_0_10px_#a33b3b] animate-ping"></div>
+            <div class="text-xl md:text-3xl font-tao tao-text tracking-widest">謝天地的修道世界</div>
+        </div>
+        
+        <!-- 桌機版選單（繁體中文單語版本） -->
+        <div class="hidden md:flex items-center space-x-8 text-[12px] tracking-[0.2em]">
+            <a href="#home" class="text-[#f4f1de]/70 hover:text-[#d4b47a] transition-all duration-300">首頁 / HOME</a>
+            <a href="#video-audit" class="text-[#f4f1de]/70 hover:text-[#d4b47a] transition-all duration-300">影片經緯勾稽 / VIDEO AUDIT</a>
+            <a href="#xingming" class="text-[#f4f1de]/70 hover:text-[#d4b47a] transition-all duration-300">性命雙修 / CELLULAR</a>
+            <a href="#koma" class="text-[#f4f1de]/70 hover:text-[#d4b47a] transition-all duration-300">科碼生技 / KOMA</a>
+            <a href="#ascension" class="text-[#f4f1de]/70 hover:text-[#d4b47a] transition-all duration-300">九步修仙 / ASCENSION</a>
+            <a href="#contact" class="text-[#f4f1de]/70 hover:text-[#d4b47a] transition-all duration-300">傳書 / LINK</a>
+        </div>
+
+        <!-- 手機版選單切換按鈕 -->
+        <div class="flex items-center space-x-4 md:hidden">
+            <button id="menu-btn" class="flex flex-col justify-between h-4 w-5 z-50 focus:outline-none">
+                <span class="h-[2px] w-full bg-[#d4b47a] transition-all duration-300 transform" id="line1"></span>
+                <span class="h-[2px] w-full bg-[#d4b47a] transition-all duration-300" id="line2"></span>
+                <span class="h-[2px] w-full bg-[#d4b47a] transition-all duration-300 transform" id="line3"></span>
+            </button>
+        </div>
+    </nav>
+
+    <div id="mobile-menu" class="fixed inset-0 bg-[#0a0a0a]/98 z-40 flex flex-col justify-center items-center space-y-8 text-xl font-tao tracking-widest transition-all duration-500 transform translate-x-full">
+        <a href="#home" class="hover:text-[#d4b47a] transition duration-300 text-slate-300">首頁 / HOME</a>
+        <a href="#video-audit" class="hover:text-[#d4b47a] transition duration-300 text-slate-300">影片經緯勾稽 / VIDEO AUDIT</a>
+        <a href="#xingming" class="hover:text-[#d4b47a] transition duration-300 text-slate-300">性命雙修 / CELLULAR</a>
+        <a href="#koma" class="hover:text-[#d4b47a] transition duration-300 text-slate-300">科碼生技 / KOMA</a>
+        <a href="#ascension" class="hover:text-[#d4b47a] transition duration-300 text-slate-300">九步修仙 / ASCENSION</a>
+        <a href="#contact" class="hover:text-[#d4b47a] transition duration-300 text-slate-300">傳書 / LINK</a>
+    </div>
+
+    <!-- 首頁 Section -->
+    <section id="home" class="min-h-screen flex flex-col justify-center items-center px-4 relative z-10 pt-24 text-center">
+        <div class="space-y-4 max-w-4xl">
+            <h2 class="text-xs md:text-sm tracking-[0.8em] text-[#a33b3b] font-bold uppercase animate-pulse">謝天地修道丹心 • 經典與現代生物科技對照網</h2>
+            <h1 class="text-4xl md:text-7xl font-tao mb-8 tao-text leading-tight select-none">
+                謝天地的修道世界
+            </h1>
+            <div class="cinnabar-line w-48 mx-auto my-6"></div>
+            <p class="max-w-3xl mx-auto text-[#f4f1de]/90 leading-relaxed text-sm md:text-lg px-6 tracking-[0.15em] font-light">
+                解構修真口訣，解密生命不老密碼。此處非凡俗點滴診所，而是以經典為根基、以科學為論證的無上自愈道場。我們將謝天地大師多年的真言授課，通過多維經緯影片勾稽，助您內參經典古卷，外應科碼生物能，直通神明，掌握負熵法門。
+            </p>
+        </div>
+        <div class="mt-16 flex flex-col items-center">
+            <span class="text-[11px] tracking-[0.5em] text-[#d4b47a]/60 mb-3 uppercase">凝神入室</span>
+            <a href="#video-audit" class="w-[1px] h-20 bg-gradient-to-b from-[#d4b47a] to-transparent hover:h-28 transition-all duration-500 cursor-pointer"></a>
+        </div>
+    </section>
+
+    <section id="video-audit" class="py-24 px-4 md:px-12 max-w-7xl mx-auto relative z-10">
+        <div class="text-center mb-12">
+            <span class="text-xs tracking-[0.6em] text-[#a33b3b] font-bold uppercase">VIDEO CORRELATION SYSTEM</span>
+            <h3 class="text-3xl md:text-5xl font-tao mt-3 tao-text">修道視界・影片經緯勾稽</h3>
+            <div class="cinnabar-line w-32 mx-auto mt-6"></div>
+            <p class="text-sm text-[#f4f1de]/70 mt-4 max-w-3xl mx-auto">
+                點擊下方勾稽章節，隨播即查。謝天地大師的法音將即時連動古籍經典，並對應粒線體、腦波、生物場域等現代科碼參數，實現無死角經典勾稽。
+            </p>
+        </div>
+
+        <div class="grid lg:grid-cols-12 gap-8 items-stretch">
+            
+            <!-- 左側 1/3：授課大綱與影片章節選擇 -->
+            <div class="lg:col-span-4 flex flex-col space-y-4">
+                <div class="tao-border p-6 rounded-xl flex-1 flex flex-col">
+                    <h4 class="text-lg font-bold text-[#d4b47a] mb-4 border-b border-[#d4b47a]/20 pb-2 flex items-center justify-between">
+                        <span>修道大綱經緯</span>
+                        <i class="fa-solid fa-scroll text-[#a33b3b]"></i>
+                    </h4>
+                    
+                    <div class="space-y-3 overflow-y-auto max-h-[450px] pr-2 flex-1" id="video-chapters-container">
+                        <!-- 由 JS 動態填充 -->
+                    </div>
+                </div>
+            </div>
+
+            <div class="lg:col-span-8 flex flex-col space-y-6">
+                <!-- 模擬影片播放器（高科技 HUD 交互面板） -->
+                <div class="tao-border p-4 rounded-xl relative overflow-hidden bg-black/95">
+                    <div class="absolute inset-0 pointer-events-none bg-[radial-gradient(ellipse_at_center,_var(--tw-gradient-stops))] from-neutral-900/10 via-black to-black"></div>
+                    
+                    <!-- 影片畫面模擬區 -->
+                    <div class="relative aspect-video rounded-lg overflow-hidden bg-neutral-900 border border-neutral-800 flex flex-col justify-between p-4 group">
+                        
+                        <!-- 頂部資訊 HUD -->
+                        <div class="relative z-10 flex justify-between items-center text-xs bg-black/40 p-2 rounded backdrop-blur">
+                            <span class="text-[#d4b47a] font-mono flex items-center space-x-2">
+                                <span class="w-2 h-2 rounded-full bg-emerald-500 animate-pulse"></span>
+                                <span id="player-chapter-num">CHAPTER 01</span>
+                            </span>
+                            <span class="text-neutral-400" id="player-chapter-title">玄關一竅的量子糾纏</span>
+                            <span class="text-[#a33b3b] font-bold font-mono">XIE TIANDI TAO WORLD</span>
+                        </div>
+
+                        <!-- 影片視覺模擬：動態幾何八卦與波形圖，對應當前影片內容 -->
+                        <div class="absolute inset-0 flex flex-col items-center justify-center pointer-events-none opacity-30 transition-all duration-700" id="video-visual-fx">
+                            <!-- 預設動態 SVG 太極八卦 -->
+                            <svg class="w-40 h-40 text-[#d4b47a] animate-[spin_40s_linear_infinite]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 3"/>
+                                <path d="M50 5C25.1 5 5 25.1 5 50C5 74.9 25.1 95 50 95C74.9 95 95 74.9 95 50" stroke="currentColor" stroke-width="1.5"/>
+                                <circle cx="50" cy="27.5" r="5" fill="currentColor"/>
+                                <circle cx="50" cy="72.5" r="5" fill="#000" stroke="currentColor" stroke-width="1.5"/>
+                            </svg>
+                        </div>
+
+                        <div class="relative z-10 flex flex-col items-center justify-center space-y-3">
+                            <a href="https://jjps7upfcrv0.jp.larksuite.com/file/QclUb5ZjnoAZwBxLqr2jlKZZpee?from=from_copylink" target="_blank" class="px-6 py-2.5 bg-gradient-to-r from-[#a33b3b] to-[#d4b47a] hover:from-[#b84343] hover:to-[#e2c18d] text-white text-xs font-bold tracking-[0.2em] rounded-full shadow-[0_0_15px_rgba(212,180,122,0.4)] transition-all duration-300 pointer-events-auto flex items-center space-x-2">
+                                <i class="fa-solid fa-play"></i>
+                                <span>點此在新視窗播放大師原片 (飛書雲端原檔)</span>
+                            </a>
+                        </div>
+
+                        <!-- 中央即時字幕顯示 -->
+                        <div class="relative z-10 w-full text-center py-3 bg-black/80 backdrop-blur-sm rounded border border-[#d4b47a]/10 max-w-lg mx-auto">
+                            <p class="text-[10px] text-neutral-400 font-mono tracking-wider">謝天地師尊口訣 / SPOKEN WORDS</p>
+                            <p class="text-sm md:text-base text-white px-4 font-tao mt-1 leading-relaxed" id="live-subtitle">
+                                「玄關一竅，不在內，不在外，亦在心腎與大腦的神妙交會之處。」
+                            </p>
+                        </div>
+
+                        <!-- 底部控制 HUD -->
+                        <div class="relative z-10 flex flex-col space-y-2 bg-black/60 p-3 rounded backdrop-blur">
+                            <!-- 進度條 -->
+                            <div class="flex items-center space-x-3">
+                                <span class="text-[10px] font-mono text-neutral-400" id="curr-time">00:00</span>
+                                <div class="flex-1 h-1 bg-neutral-800 rounded-full relative cursor-pointer" id="progress-bar-container" onclick="handleProgressBarClick(event)">
+                                    <div class="absolute left-0 top-0 h-full bg-gradient-to-r from-[#a33b3b] to-[#d4b47a] rounded-full transition-all duration-300" id="progress-bar-fill" style="width: 0%"></div>
+                                    <div class="absolute w-3 h-3 bg-white border-2 border-[#d4b47a] rounded-full -top-1 transition-all duration-300" id="progress-bar-handle" style="left: 0%"></div>
+                                </div>
+                                <span class="text-[10px] font-mono text-[#d4b47a]" id="total-time">12:00</span>
+                            </div>
+
+                            <!-- 按鈕排 -->
+                            <div class="flex justify-between items-center text-xs mt-1">
+                                <div class="flex items-center space-x-4">
+                                    <button onclick="toggleVideoPlayback()" class="text-[#f4f1de] hover:text-[#d4b47a] transition-colors focus:outline-none">
+                                        <i class="fa-solid fa-play text-base" id="play-btn-icon"></i>
+                                    </button>
+                                    <button onclick="stopVideoPlayback()" class="text-[#f4f1de] hover:text-[#a33b3b] transition-colors focus:outline-none">
+                                        <i class="fa-solid fa-stop text-sm"></i>
+                                    </button>
+                                    <span class="text-[10px] border border-[#a33b3b]/30 rounded-full px-2 py-0.5 bg-black text-[#a33b3b]" id="play-status">PAUSED</span>
+                                </div>
+                                <div class="flex items-center space-x-2 text-neutral-400 font-mono text-[10px]">
+                                    <i class="fa-solid fa-microchip"></i>
+                                    <span>實時生醫遙測連線：活性正常</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid md:grid-cols-2 gap-4 mt-4">
+                        
+                        <!-- 經緯古籍勾稽翅膀 -->
+                        <div class="p-5 rounded-lg border border-[#d4b47a]/20 bg-neutral-900/60 relative">
+                            <span class="absolute top-2 right-3 text-[10px] font-mono text-[#d4b47a]/40 uppercase tracking-widest">經典經緯</span>
+                            <h5 class="text-sm font-bold text-[#d4b47a] mb-2 flex items-center space-x-2">
+                                <i class="fa-solid fa-book-open"></i>
+                                <span id="audit-classic-title">《道德經・玄關章》</span>
+                            </h5>
+                            <p class="text-xs text-[#f4f1de]/90 leading-relaxed italic" id="audit-classic-desc">
+                                「玄之又玄，眾妙之門。天地之根，綿綿若存，用之不勤。」
+                            </p>
+                        </div>
+
+                        <!-- 現代科學與科碼技術勾稽翅膀 -->
+                        <div class="p-5 rounded-lg border border-[#a33b3b]/20 bg-neutral-900/60 relative">
+                            <span class="absolute top-2 right-3 text-[10px] font-mono text-[#a33b3b]/40 uppercase tracking-widest">科碼生技</span>
+                            <h5 class="text-sm font-bold text-[#a33b3b] mb-2 flex items-center space-x-2">
+                                <i class="fa-solid fa-flask-pulse"></i>
+                                <span id="audit-science-title">松果體光敏感與電磁諧振</span>
+                            </h5>
+                            <p class="text-xs text-[#f4f1de]/90 leading-relaxed" id="audit-science-desc">
+                                松果體含有感光細胞，能接收地磁波共振。此處活化對應著高能腦波（Gamma）的和諧性輸出，與冥想的高能意識態相吻合。
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="xingming" class="py-24 px-6 max-w-6xl mx-auto relative z-10 border-t border-b border-[#d4b47a]/15">
+        <div class="text-center mb-16">
+            <span class="text-xs tracking-[0.6em] text-[#a33b3b] font-bold uppercase">I. Nature & Life Dual Energy</span>
+            <h3 class="text-4xl md:text-5xl font-tao mt-3 tao-text">性命雙修：科碼生物能與粒線體</h3>
+            <div class="cinnabar-line w-32 mx-auto mt-6"></div>
+            <p class="text-sm text-[#f4f1de]/70 mt-4 max-w-2xl mx-auto">
+                「性」為心神，「命」為肉身。有別於坊間依賴侵入式醫療強行留住青春，謝天地的數位丹道倡導一套系統化的本源自愈心法。我們以經典為藥引，配合現代科碼生物科技，喚醒不朽命元。
+            </p>
+            
+            <div class="flex justify-center space-x-4 mt-8">
+                <button onclick="setWaidanTab('diagnosis')" id="tab-btn-diagnosis" class="px-5 py-2 text-xs border border-[#d4b47a] bg-[#d4b47a] text-black font-bold rounded-full transition-all">生命能脈絡</button>
+                <button onclick="setWaidanTab('downward')" id="tab-btn-downward" class="px-5 py-2 text-xs border border-[#d4b47a]/30 text-[#d4b47a] rounded-full hover:bg-[#d4b47a]/10 transition-all">技術下放</button>
+                <button onclick="setWaidanTab('anchors')" id="tab-btn-anchors" class="px-5 py-2 text-xs border border-[#d4b47a]/30 text-[#d4b47a] rounded-full hover:bg-[#d4b47a]/10 transition-all">科學錨點</button>
+            </div>
+        </div>
+
+        <!-- 互動分頁一：細胞粒線體模型與經絡點擊 -->
+        <div id="waidan-tab-diagnosis" class="grid md:grid-cols-12 gap-12 items-center">
+            <div class="md:col-span-6 flex flex-col items-center justify-center relative bg-[#111]/60 p-8 rounded-xl border border-[#d4b47a]/10">
+                <span class="text-[10px] text-[#d4b47a]/60 uppercase tracking-[0.3em] mb-4 text-center">點擊下方器官節點 診斷粒線體異常病徵</span>
+                
+                <div class="relative w-72 h-72 flex items-center justify-center">
+                    <svg class="w-60 h-60 text-[#a33b3b]/30 animate-[pulse_4s_infinite_ease-in-out]" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M100 20C50 20 20 50 20 100C20 150 50 180 100 180C150 180 180 150 180 100C180 50 150 20 100 20Z" stroke="#d4b47a" stroke-width="2" stroke-dasharray="4 4"/>
+                        <path d="M45 100C45 80 60 70 70 85C80 100 90 120 100 100C110 80 120 75 130 95C140 115 150 100 155 100" stroke="#a33b3b" stroke-width="3" stroke-linecap="round"/>
+                    </svg>
+
+                    <button onclick="showMitoFact('brain')" class="absolute top-8 left-1/2 -translate-x-1/2 bg-[#000] border border-[#d4b47a] hover:bg-[#a33b3b] text-xs px-3 py-1.5 rounded-full text-[#d4b47a] hover:text-[#f4f1de] transition-all z-20">
+                        🧠 頂輪 (大腦)
+                    </button>
+                    <button onclick="showMitoFact('heart')" class="absolute top-1/2 left-12 -translate-y-1/2 bg-[#000] border border-[#d4b47a] hover:bg-[#a33b3b] text-xs px-3 py-1.5 rounded-full text-[#d4b47a] hover:text-[#f4f1de] transition-all z-20">
+                        🫀 中丹田 (心臟)
+                    </button>
+                    <button onclick="showMitoFact('muscle')" class="absolute top-1/2 right-8 -translate-y-1/2 bg-[#000] border border-[#d4b47a] hover:bg-[#a33b3b] text-xs px-3 py-1.5 rounded-full text-[#d4b47a] hover:text-[#f4f1de] transition-all z-20">
+                        💪 氣血 (骨骼肌)
+                    </button>
+                    <button onclick="showMitoFact('metabolism')" class="absolute bottom-8 left-1/2 -translate-x-1/2 bg-[#000] border border-[#d4b47a] hover:bg-[#a33b3b] text-xs px-3 py-1.5 rounded-full text-[#d4b47a] hover:text-[#f4f1de] transition-all z-20">
+                        🪴 下丹田 (肝腎代謝)
+                    </button>
+
+                    <div class="absolute w-12 h-12 rounded-full bg-gradient-to-r from-[#d4b47a] to-[#a33b3b] opacity-75 blur-md flex items-center justify-center text-[10px] text-black font-bold font-mono">ATP</div>
+                </div>
+            </div>
+
+            <div class="md:col-span-6 space-y-6">
+                <div id="mito-info-box" class="tao-border p-8 rounded-xl min-h-[250px] flex flex-col justify-center">
+                    <div id="mito-placeholder" class="text-left">
+                        <h4 class="text-xl font-bold text-[#d4b47a] mb-4">點擊左側生命脈絡結點</h4>
+                        <p class="text-sm text-[#f4f1de]/70 leading-relaxed">
+                            探索人體內部能量發動機——「粒線體」的運作密碼。
+                            了解當細胞真氣（ATP）虧損時，肉身會發出哪些求救信號，而我們如何通過科碼現代外丹技術重構能量。
+                        </p>
+                    </div>
+
+                    <!-- 大腦資訊 -->
+                    <div id="mito-brain" class="hidden space-y-4 text-left">
+                        <span class="text-xs font-mono text-[#a33b3b] tracking-widest uppercase">Mitochondrial Dysfunction / Brain</span>
+                        <h4 class="text-2xl font-bold text-[#d4b47a] font-tao">神識受阻：大腦與神經衰變</h4>
+                        <p class="text-sm text-[#f4f1de]/80 leading-relaxed">
+                            大腦雖然僅佔體重的 2%，卻消耗了全身 20% 的 ATP 能量。當粒線體供能不足，會導致神經髓鞘退化與神經元凋亡。臨床表現為：偏頭痛、精神衰弱、抽搐、中風、認知失調與失智症。
+                        </p>
+                        <div class="border-t border-[#d4b47a]/15 pt-4 text-xs text-[#d4b47a]">
+                            <span class="font-bold">科碼外丹解：</span> <span>以高能科碼訊號傳導，活化腦源性神經營養因子 (BDNF)，修復突觸。</span>
+                        </div>
+                    </div>
+
+                    <!-- 心臟資訊 -->
+                    <div id="mito-heart" class="hidden space-y-4 text-left">
+                        <span class="text-xs font-mono text-[#a33b3b] tracking-widest uppercase">Mitochondrial Dysfunction / Heart</span>
+                        <h4 class="text-2xl font-bold text-[#d4b47a] font-tao">心陽不振：心肌傳導與病變</h4>
+                        <p class="text-sm text-[#f4f1de]/80 leading-relaxed">
+                            心臟需要全天候不間斷跳動，對 ATP 的依賴度極高。粒線體異常會造成心肌纖維化、ATP 生成斷崖式下跌，引發：心肌傳導障礙、心肌病變、以及 WPW 症候群（預激綜合症）。
+                        </p>
+                        <div class="border-t border-[#d4b47a]/15 pt-4 text-xs text-[#d4b47a]">
+                            <span class="font-bold">科碼外丹解：</span> <span>利用科碼高吸收率機制優化心肌細胞電子傳遞鏈，提高心肌耐缺氧度。</span>
+                        </div>
+                    </div>
+
+                    <!-- 肌肉資訊 -->
+                    <div id="mito-muscle" class="hidden space-y-4 text-left">
+                        <span class="text-xs font-mono text-[#a33b3b] tracking-widest uppercase">Mitochondrial Dysfunction / Muscle</span>
+                        <h4 class="text-2xl font-bold text-[#d4b47a] font-tao">形骸虛無：骨骼肌萎縮與疲勞</h4>
+                        <p class="text-sm text-[#f4f1de]/80 leading-relaxed">
+                            骨骼肌是人體運動的主力。粒線體網絡重構（Fusion and Fission）障礙會導致活性氧（ROS）自由基過量囤積，撕裂肌纖維，表現為：慢性虛弱、重症疲勞、肌肉萎縮及神經肌肉病變。
+                        </p>
+                        <div class="border-t border-[#d4b47a]/15 pt-4 text-xs text-[#d4b47a]">
+                            <span class="font-bold">科碼外丹解：</span> <span>促進粒線體新生融合，重構高強度肌肉動能與抗氧化機制。</span>
+                        </div>
+                    </div>
+
+                    <!-- 代謝資訊 -->
+                    <div id="mito-metabolism" class="hidden space-y-4 text-left">
+                        <span class="text-xs font-mono text-[#a33b3b] tracking-widest uppercase">Mitochondrial Dysfunction / Organs</span>
+                        <h4 class="text-2xl font-bold text-[#d4b47a] font-tao">九臟失調：代謝衰退與病變</h4>
+                        <p class="text-sm text-[#f4f1de]/80 leading-relaxed">
+                            肝臟、胰臟與腎臟是過濾、代謝與解毒的中樞。粒線體呼吸作用中斷會引發胰島素抵抗、肝臟纖維化與假性阻塞，衍生為：糖尿病、肝癌、肝硬化與 Fanconi 氏症候群（腎小管功能障礙）。
+                        </p>
+                        <div class="border-t border-[#d4b47a]/15 pt-4 text-xs text-[#d4b47a]">
+                            <span class="font-bold">科碼外丹解：</span> <span>科碼靶向輸送技術可抑制器官脂質過氧化，重構全身能量負熵環。</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 互動分頁二：技術下放對比 -->
+        <div id="waidan-tab-downward" class="hidden max-w-4xl mx-auto">
+            <div class="tao-border p-8 md:p-12 rounded-xl text-left space-y-8">
+                <h4 class="text-2xl md:text-3xl font-tao text-[#d4b47a] tracking-wider">從功能醫學診所，到日常居家自主管理</h4>
+                <p class="text-sm text-[#f4f1de]/80 leading-relaxed">
+                    傳統上，系統性活化粒線體與補充 NAD+ 依賴昂貴且具侵入性的靜脈點滴。MitoActiveLife 通過科碼™多重靶向導航機制，將其下放為可量化的非侵入式口服與外用系統。
+                </p>
+                <div class="grid md:grid-cols-2 gap-6 pt-4 border-t border-[#d4b47a]/20">
+                    <div class="p-6 bg-black/40 rounded-lg border border-[#a33b3b]/30">
+                        <span class="text-xs font-bold text-[#a33b3b] uppercase tracking-wider">診所 IV NAD+ 點滴</span>
+                        <div class="text-3xl font-bold text-[#f4f1de] my-2">NT$16,000 - $30,000+</div>
+                        <p class="text-xs text-[#f4f1de]/60">靜脈扎針、需排診請假，高成本、難以長期持續</p>
+                    </div>
+                    <div class="p-6 bg-black/60 rounded-lg border border-[#d4b47a]/50 pulse-gold">
+                        <span class="text-xs font-bold text-[#d4b47a] uppercase tracking-wider">MitoActiveLife 科碼™ 系統</span>
+                        <div class="text-3xl font-bold text-[#d4b47a] my-2">NT$5,833 <span class="text-xs font-normal">/ 90-Day Reset</span></div>
+                        <p class="text-xs text-[#f4f1de]/90">居家口服系統，隨附 90 天健康自評追蹤與個人化趨勢報告</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 互動分頁三：科學錨點 -->
+        <div id="waidan-tab-anchors" class="hidden max-w-4xl mx-auto">
+            <div class="grid md:grid-cols-2 gap-8">
+                <div class="tao-border p-8 rounded-xl text-left">
+                    <span class="text-xs font-mono text-[#a33b3b] tracking-widest uppercase">ANCHOR I</span>
+                    <h4 class="text-xl font-bold text-[#d4b47a] mt-2 mb-4 font-tao">2009 諾貝爾生理醫學獎</h4>
+                    <p class="text-xs text-[#f4f1de]/70 leading-relaxed">
+                        Elizabeth Blackburn 等科學家因發現端粒與端粒酶保護染色體之機制，榮獲諾貝爾獎，奠定了端粒為細胞老化關鍵科學框架的基石。
+                    </p>
+                </div>
+                <div class="tao-border p-8 rounded-xl text-left">
+                    <span class="text-xs font-mono text-[#a33b3b] tracking-widest uppercase">ANCHOR II</span>
+                    <h4 class="text-xl font-bold text-[#d4b47a] mt-2 mb-4 font-tao">哈佛大衛·辛克萊先驅研究</h4>
+                    <p class="text-xs text-[#f4f1de]/70 leading-relaxed">
+                        推動 NMN 從實驗室走向主流，論證了提升細胞內 NAD+ 水平對活化 Sirtuin (去乙醯化酶) 基因及長壽路徑的核心關聯。
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 科碼 Section -->
+    <section id="koma" class="py-24 bg-[#080808]/95 relative z-10">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="text-xs tracking-[0.6em] text-[#a33b3b] font-bold uppercase">II. KOMA & Modern Crucible</span>
+                <h3 class="text-4xl md:text-5xl font-tao mt-3 tao-text">科碼：現代外丹與量子燒結</h3>
+                <div class="cinnabar-line w-32 mx-auto mt-6"></div>
+                <p class="text-sm text-[#f4f1de]/70 mt-4 max-w-3xl mx-auto">
+                    科碼（KOMA）是現代生物科技煉丹技術的中心。引進【MitoActiveLife 活『粒』生活】的『七重金丹路徑』，將有機複合鈣、D3吸收閘門、輔酶Q10等活性分子與『MDSNV燕窩酸奈米囊』精準遞送系統融合，再注入「謝天地大師修真法音影片數據」作為真火調協，進行分子級量子複方一體燒結。
+                </p>
+            </div>
+
+            <!-- 產品簡介 -->
+            <div class="grid md:grid-cols-2 gap-8 mb-16 text-left">
+                <!-- 內服線 -->
+                <div class="tao-border p-8 rounded-xl space-y-6">
+                    <span class="text-xs font-mono text-[#a33b3b] tracking-widest uppercase">INTERNAL COMPOSITION</span>
+                    <h4 class="text-2xl font-bold text-[#d4b47a] font-tao">科碼™ 內服系統</h4>
+                    <ul class="space-y-4 text-sm text-[#f4f1de]/80">
+                        <li>• <strong class="text-[#d4b47a]">Mito Core Daily (Sustain):</strong> 日間粒線體能量管理。專利科碼生技配方，活化粒線體機能。維持高能續航。</li>
+                        <li>• <strong class="text-[#d4b47a]">Mito Night Repair (Renew):</strong> 夜間修復重置。專利科碼配方，NMN、煙醯胺、神經醯胺，引導深層修復。</li>
+                    </ul>
+                </div>
+
+                <!-- 外用線 -->
+                <div class="tao-border p-8 rounded-xl space-y-6">
+                    <span class="text-xs font-mono text-[#a33b3b] tracking-widest uppercase">TOPICAL SYNERGY</span>
+                    <h4 class="text-2xl font-bold text-[#d4b47a] font-tao">科碼™ 外用屏障</h4>
+                    <ul class="space-y-4 text-sm text-[#f4f1de]/80">
+                        <li>• <strong class="text-[#d4b47a]">Mito Core Daily Serum:</strong> 日間肌膚能量精華。科碼導航NMN、煙醯胺、神經醯胺。抵抗光老化屏障。</li>
+                        <li>• <strong class="text-[#d4b47a]">Mito Night Repair Cream:</strong> 夜間密集修護霜。NMN、胜肽、角鯊烷。深度屏障重建。</li>
+                        <li>• <strong class="text-[#d4b47a]">Mito Eye Recharge:</strong> 眼周高耗能局部修護精華。改善細紋與疲態。</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- 交互式量子燒結鼎 -->
+            <div class="border-t border-[#d4b47a]/10 pt-16">
+                <h4 class="text-2xl font-bold text-center text-[#d4b47a] font-tao mb-10">量子燒結現代煉丹爐</h4>
+                <div class="grid md:grid-cols-12 gap-10 items-center">
+                    
+                    <!-- 選擇原料 (左 5 欄) -->
+                    <div class="md:col-span-5 space-y-4 text-left">
+                        <h4 class="text-lg font-bold text-[#d4b47a] border-b border-[#d4b47a]/20 pb-2 tracking-widest">
+                            一、選擇精純原料 (限選2項)
+                        </h4>
+                        
+                        <div onclick="toggleIngredient('data')" id="ing-data" class="cursor-pointer p-4 rounded-lg border border-[#d4b47a]/15 bg-[#121212] flex items-center justify-between hover:bg-[#1a1a1a] transition-all">
+                            <div class="flex items-center space-x-4">
+                                <span class="text-[#a33b3b] font-mono">01</span>
+                                <div>
+                                    <div class="font-bold text-slate-200">謝天地授課影片數據 (Video)</div>
+                                    <div class="text-xs text-slate-500">轉化大師音頻與法門，凝聚為能量代碼</div>
+                                </div>
+                            </div>
+                            <div class="check-box w-5 h-5 rounded border border-[#d4b47a]/30 flex items-center justify-center text-xs text-[#d4b47a]"></div>
+                        </div>
+
+                        <div onclick="toggleIngredient('story')" id="ing-story" class="cursor-pointer p-4 rounded-lg border border-[#d4b47a]/15 bg-[#121212] flex items-center justify-between hover:bg-[#1a1a1a] transition-all">
+                            <div class="flex items-center space-x-4">
+                                <span class="text-[#a33b3b] font-mono">02</span>
+                                <div>
+                                    <div class="font-bold text-slate-200">九典經緯框架 (Classic Script)</div>
+                                    <div class="text-xs text-slate-500">具有高度自愈力之經典命名與法術真諦</div>
+                                </div>
+                            </div>
+                            <div class="check-box w-5 h-5 rounded border border-[#d4b47a]/30 flex items-center justify-center text-xs text-[#d4b47a]"></div>
+                        </div>
+
+                        <div onclick="toggleIngredient('koma')" id="ing-koma" class="cursor-pointer p-4 rounded-lg border border-[#d4b47a]/15 bg-[#121212] flex items-center justify-between hover:bg-[#1a1a1a] transition-all">
+                            <div class="flex items-center space-x-4">
+                                <span class="text-[#a33b3b] font-mono">03</span>
+                                <div>
+                                    <div class="font-bold text-slate-200">科碼生技活化因子 (KOMA)</div>
+                                    <div class="text-xs text-slate-500">粒線體激活與多重靶向科技，複方模組核心</div>
+                                </div>
+                            </div>
+                            <div class="check-box w-5 h-5 rounded border border-[#d4b47a]/30 flex items-center justify-center text-xs text-[#d4b47a]"></div>
+                        </div>
+
+                        <div onclick="toggleIngredient('auto')" id="ing-auto" class="cursor-pointer p-4 rounded-lg border border-[#d4b47a]/15 bg-[#121212] flex items-center justify-between hover:bg-[#1a1a1a] transition-all">
+                            <div class="flex items-center space-x-4">
+                                <span class="text-[#a33b3b] font-mono">04</span>
+                                <div>
+                                    <div class="font-bold text-slate-200">太乙自動化經脈 (Automation)</div>
+                                    <div class="text-xs text-slate-500">免去手動搜尋，全自動連動影片與經典</div>
+                                </div>
+                            </div>
+                            <div class="check-box w-5 h-5 rounded border border-[#d4b47a]/30 flex items-center justify-center text-xs text-[#d4b47a]"></div>
+                        </div>
+                    </div>
+
+                    <!-- 鼎爐互動中心 (中 3 欄) -->
+                    <div class="md:col-span-3 flex flex-col items-center justify-center py-8">
+                        <div id="cauldron" class="relative w-44 h-44 flex items-center justify-center border border-[#d4b47a]/25 rounded-full p-4 bg-[#0a0a0a] shadow-inner transition-all duration-500 pulse-gold">
+                            <div class="absolute inset-0 border border-dashed border-[#d4b47a]/10 rounded-full animate-[spin_60s_linear_infinite]"></div>
+                            <svg class="w-24 h-24 text-[#d4b47a] relative z-10" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 21a9.004 9.004 0 008.716-6.747M12 21a9.004 9.004 0 01-8.716-6.747M12 21V9m0 0a3 3 0 100-6 3 3 0 000 6zM4 9h16" />
+                            </svg>
+                            <div id="fire-glow" class="absolute bottom-6 w-12 h-12 bg-[#a33b3b]/20 blur-xl rounded-full transition-all duration-500"></div>
+                        </div>
+
+                        <button onclick="startBrewing()" class="mt-8 px-8 py-3 bg-gradient-to-r from-[#a33b3b] to-[#d4b47a] text-[#f4f1de] text-sm tracking-[0.2em] font-bold rounded-full shadow-[0_4px_15px_rgba(163,59,59,0.4)] hover:brightness-110 active:scale-95 transition-all">
+                            啟動真火 凝煉金丹
+                        </button>
+                    </div>
+
+                    <!-- 煉丹成果展示 (右 4 欄) -->
+                    <div class="md:col-span-4 h-full">
+                        <div id="brew-result" class="tao-border p-6 rounded-xl h-full flex flex-col justify-center items-center min-h-[300px] text-center relative overflow-hidden">
+                            <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#d4b47a]/40 to-transparent"></div>
+                            
+                            <div id="brew-init-state">
+                                <div class="font-tao text-4xl text-[#d4b47a]/30 mb-4">乾坤虛位</div>
+                                <p class="text-xs text-[#f4f1de]/40 leading-relaxed px-4">請於左側投入兩道真氣原料，方能催動爐火，凝結不朽仙丹。</p>
+                            </div>
+
+                            <div id="brew-loading-state" class="hidden">
+                                <div class="w-10 h-10 border-4 border-t-[#d4b47a] border-r-transparent border-b-[#a33b3b] border-l-transparent rounded-full animate-spin mx-auto mb-6"></div>
+                                <div class="font-tao text-2xl text-[#d4b47a] animate-pulse">神念交互，真火精煉中...</div>
+                                <p class="text-[11px] text-[#f4f1de]/40 mt-3 tracking-widest">量子負熵能正在急速凝聚</p>
+                            </div>
+
+                            <div id="brew-success-state" class="hidden">
+                                <span class="text-[10px] px-3 py-1 bg-[#a33b3b]/20 border border-[#a33b3b]/50 text-[#d4b47a] font-mono rounded-full font-bold">SUCCESSFULLY BREWED</span>
+                                <div id="dan-name" class="font-tao text-3xl text-[#d4b47a] my-4 leading-normal"></div>
+                                <div class="cinnabar-line w-20 mx-auto mb-4"></div>
+                                <p id="dan-desc" class="text-xs text-[#f4f1de]/80 px-2 leading-relaxed mb-6"></p>
+                                
+                                <div class="grid grid-cols-2 gap-3 w-full text-left text-[11px] border-t border-[#d4b47a]/15 pt-4">
+                                    <div><span class="text-neutral-500">真丹品階：</span><span class="text-[#d4b47a] font-bold" id="dan-rank">極品先天</span></div>
+                                    <div><span class="text-neutral-500">負熵強度：</span><span class="text-green-500 font-bold" id="dan-entropy">+94.8%</span></div>
+                                    <div class="col-span-2"><span class="text-neutral-500">護體功用：</span><span class="text-slate-300" id="dan-utility"></span></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 九步修仙 Section -->
+    <section id="ascension" class="py-24 bg-black/40 border-t border-[#d4b47a]/10 relative z-10">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-16">
+                <span class="text-xs tracking-[0.6em] text-[#a33b3b] font-bold uppercase">III. 9-Step Ascension Path</span>
+                <h3 class="text-4xl md:text-5xl font-tao mt-3 tao-text">九步修仙：內在丹道演算法</h3>
+                <div class="cinnabar-line w-32 mx-auto mt-6"></div>
+                <p class="text-sm text-[#f4f1de]/70 mt-4 max-w-2xl mx-auto">
+                    外用與內服皆為「外丹」之輔，欲求大道，需行「內丹九步修仙」。這是一套將古老修真法決解譯為現代生命進化與逆向增長的「負熵心法系統」。點擊法輪，解密九步機要。
+                </p>
+            </div>
+
+            <div class="grid md:grid-cols-12 gap-10 items-start">
+                <!-- 九步法輪 (左 7 欄) -->
+                <div class="md:col-span-7 grid grid-cols-3 gap-4">
+                    <div onclick="selectAscensionStep(1)" class="asc-card group cursor-pointer p-4 rounded-xl border border-[#d4b47a]/15 bg-black/60 hover:border-[#d4b47a] transition-all text-center">
+                        <span class="text-xs font-mono text-[#a33b3b] block mb-1">STEP 01</span>
+                        <h5 class="text-lg font-tao text-slate-300 group-hover:text-[#d4b47a] transition-colors">築基煉己</h5>
+                    </div>
+                    <div onclick="selectAscensionStep(2)" class="asc-card group cursor-pointer p-4 rounded-xl border border-[#d4b47a]/15 bg-black/60 hover:border-[#d4b47a] transition-all text-center">
+                        <span class="text-xs font-mono text-[#a33b3b] block mb-1">STEP 02</span>
+                        <h5 class="text-lg font-tao text-slate-300 group-hover:text-[#d4b47a] transition-colors">採藥歸鼎</h5>
+                    </div>
+                    <div onclick="selectAscensionStep(3)" class="asc-card group cursor-pointer p-4 rounded-xl border border-[#d4b47a]/15 bg-black/60 hover:border-[#d4b47a] transition-all text-center">
+                        <span class="text-xs font-mono text-[#a33b3b] block mb-1">STEP 03</span>
+                        <h5 class="text-lg font-tao text-slate-300 group-hover:text-[#d4b47a] transition-colors">乾坤交媾</h5>
+                    </div>
+                    <div onclick="selectAscensionStep(4)" class="asc-card group cursor-pointer p-4 rounded-xl border border-[#d4b47a]/15 bg-black/60 hover:border-[#d4b47a] transition-all text-center">
+                        <span class="text-xs font-mono text-[#a33b3b] block mb-1">STEP 04</span>
+                        <h5 class="text-lg font-tao text-slate-300 group-hover:text-[#d4b47a] transition-colors">周天火候</h5>
+                    </div>
+                    <div onclick="selectAscensionStep(5)" class="asc-card group cursor-pointer p-4 rounded-xl border border-[#d4b47a]/15 bg-black/60 hover:border-[#d4b47a] transition-all text-center">
+                        <span class="text-xs font-mono text-[#a33b3b] block mb-1">STEP 05</span>
+                        <h5 class="text-lg font-tao text-slate-300 group-hover:text-[#d4b47a] transition-colors">玉液還丹</h5>
+                    </div>
+                    <div onclick="selectAscensionStep(6)" class="asc-card group cursor-pointer p-4 rounded-xl border border-[#d4b47a]/15 bg-black/60 hover:border-[#d4b47a] transition-all text-center">
+                        <span class="text-xs font-mono text-[#a33b3b] block mb-1">STEP 06</span>
+                        <h5 class="text-lg font-tao text-slate-300 group-hover:text-[#d4b47a] transition-colors">金液還丹</h5>
+                    </div>
+                    <div onclick="selectAscensionStep(7)" class="asc-card group cursor-pointer p-4 rounded-xl border border-[#d4b47a]/15 bg-black/60 hover:border-[#d4b47a] transition-all text-center">
+                        <span class="text-xs font-mono text-[#a33b3b] block mb-1">STEP 07</span>
+                        <h5 class="text-lg font-tao text-slate-300 group-hover:text-[#d4b47a] transition-colors">脫胎神化</h5>
+                    </div>
+                    <div onclick="selectAscensionStep(8)" class="asc-card group cursor-pointer p-4 rounded-xl border border-[#d4b47a]/15 bg-black/60 hover:border-[#d4b47a] transition-all text-center">
+                        <span class="text-xs font-mono text-[#a33b3b] block mb-1">STEP 08</span>
+                        <h5 class="text-lg font-tao text-slate-300 group-hover:text-[#d4b47a] transition-colors">移神乾頂</h5>
+                    </div>
+                    <div onclick="selectAscensionStep(9)" class="asc-card group cursor-pointer p-4 rounded-xl border border-[#d4b47a]/15 bg-black/60 hover:border-[#d4b47a] transition-all text-center">
+                        <span class="text-xs font-mono text-[#a33b3b] block mb-1">STEP 09</span>
+                        <h5 class="text-lg font-tao text-slate-300 group-hover:text-[#d4b47a] transition-colors">虛空粉碎</h5>
+                    </div>
+                </div>
+
+                <!-- Central Decree Box (右 5 欄) -->
+                <div class="md:col-span-5 h-full">
+                    <div id="ascension-decree-box" class="tao-border p-8 rounded-xl min-h-[300px] flex flex-col justify-center text-left relative overflow-hidden">
+                        <div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-[#a33b3b] to-transparent"></div>
+                        <span class="text-xs font-mono text-[#a33b3b]" id="decree-num">DECREE OF VOID</span>
+                        <h4 class="text-3xl font-tao text-[#d4b47a] my-4" id="decree-title">玄門法決</h4>
+                        <p class="text-sm text-[#f4f1de]/70 leading-relaxed" id="decree-desc">
+                            請點擊左側九步法輪中的修真步驟。
+                            每一層皆對應著內丹術中真氣流轉的無上秘密，以及生命或商業系統的「負熵代碼升華」。
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- 頁尾與傳書 Section -->
+    <footer id="contact" class="py-32 text-center relative z-10 border-t border-[#d4b47a]/10">
+        <div class="max-w-2xl mx-auto px-6">
+            <h3 class="text-4xl font-tao mb-10 tao-text tracking-widest">傳書致意</h3>
+            <p class="text-[#f4f1de]/70 text-sm mb-16 tracking-widest leading-relaxed">
+                欲探尋品牌之進化起點，亦或開啟一場與謝天地大師的高維對話？<br>
+                數據與真炁如飛泉流轉，在寂靜中，靜候您的回音。
+            </p>
+            
+            <!-- 聯絡方式動態線 -->
+            <div class="flex justify-center space-x-12 md:space-x-20">
+                <a href="https://www.youtube.com/@%E4%BF%AE%E9%81%93%E4%B8%B9%E5%BF%83" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center cursor-pointer">
+                    <span class="text-[11px] text-[#f4f1de]/50 mb-3 group-hover:text-[#d4b47a] transition-colors duration-300 tracking-widest uppercase font-mono">YouTube 道場</span>
+                    <div class="w-10 h-[1.5px] bg-[#a33b3b] group-hover:w-20 group-hover:bg-[#d4b47a] transition-all duration-300"></div>
+                </a>
+                <a href="https://line.me" target="_blank" rel="noopener noreferrer" class="group flex flex-col items-center cursor-pointer">
+                    <span class="text-[11px] text-[#f4f1de]/50 mb-3 group-hover:text-[#d4b47a] transition-colors duration-300 tracking-widest uppercase font-mono">LINE 諮詢</span>
+                    <div class="w-10 h-[1.5px] bg-[#a33b3b] group-hover:w-20 group-hover:bg-[#d4b47a] transition-all duration-300"></div>
+                </a>
+                <a href="mailto:contact@yourdomain.com" class="group flex flex-col items-center cursor-pointer">
+                    <span class="text-[11px] text-[#f4f1de]/50 mb-3 group-hover:text-[#d4b47a] transition-colors duration-300 tracking-widest uppercase font-mono">電子飛書</span>
+                    <div class="w-10 h-[1.5px] bg-[#a33b3b] group-hover:w-20 group-hover:bg-[#d4b47a] transition-all duration-300"></div>
+                </a>
+            </div>
+            
+            <p class="mt-32 text-[10px] text-[#f4f1de]/15 tracking-[0.8em] uppercase font-bold leading-normal">
+                © 2026 XIE TIANDI TAOIST DIGITAL LAB.<br>
+                VOID IS FORM. ALL RIGHTS RESERVED.
+            </p>
+        </div>
+    </footer>
+
+    <!-- 自訂通知提示 -->
+    <div id="toast" class="fixed bottom-6 right-6 z-50 transform translate-y-20 opacity-0 transition-all duration-500 bg-[#0f0f0f]/95 border border-[#d4b47a] px-6 py-4 rounded-xl shadow-[0_4px_25px_rgba(212,180,122,0.3)] max-w-sm flex items-start space-x-3 pointer-events-none">
+        <span class="text-[#d4b47a] font-bold" id="toast-title">【玄門傳書】</span>
+        <p id="toast-msg" class="text-xs text-[#f4f1de]/90 leading-relaxed"></p>
+    </div>
+
+    <!-- 邏輯腳本 -->
+    <script>
+        // 影片與經典勾稽核心資料庫 (不含多語系，純繁體中文)
+        const videoChaptersData = [
+            {
+                id: "ch1",
+                num: "CHAPTER 01",
+                title: "玄關一竅的量子糾纏",
+                duration: "03:45",
+                spoken: "「玄關一竅，不在內，不在外，亦在心腎與大腦的神妙交會之處。此乃先天真氣射入肉身之錨點。」",
+                classic_title: "《道德經・第一章》與《參同契》",
+                classic_desc: "「玄之又玄，眾妙之門。」內丹家視此處為真炁生發之所。天地一呼一吸，陰陽化合，皆由此一竅而入乾坤鼎中。",
+                science_title: "松果體光敏光電偶合與 Gamma 腦波諧振",
+                science_desc: "大腦松果體內含微晶體構造，具備壓電效應。當修行至入定態，大腦輸出 40Hz 以上之 Gamma 諧振波，與地磁 Schumann Resonance 產生極致相位鎖定。"
+            },
+            {
+                id: "ch2",
+                num: "CHAPTER 02",
+                title: "採藥歸鼎：細胞呼吸與真氣回春",
+                duration: "04:12",
+                spoken: "「採天地之元氣，將藥料納入下丹田之爐鼎。以意領氣，活化細胞本源命火。」",
+                classic_title: "《悟真篇・金丹歌》",
+                classic_desc: "「鉛汞相投結胎砂，乾坤交媾產仙芽。」指體內不同生命化學物質的和諧交互，歸鼎代表將游離能量聚於核心。",
+                science_title: "粒線體電子傳遞鏈活化與 ATP 合成倍增",
+                science_desc: "『採藥』等同於活化粒線體內膜上的 H+ 質子梯度。高濃度 NAD+ 促進 ATP 合成酶高速旋轉，將原本流失的熱能鎖定為高度可用的細胞真氣（ATP）。"
+            },
+            {
+                id: "ch3",
+                num: "CHAPTER 03",
+                title: "陽神出殼：多維意識投射",
+                duration: "04:03",
+                spoken: "「修煉至九步之境，純陽之神，可透頂門而出，不受時間與空間之維度枷鎖禁錮。」",
+                classic_title: "《伍柳仙宗・金仙證論》",
+                classic_desc: "「法身脫體，移神乾頂。」意識擺脫肉身有形細胞結構，與法界太虛虛無混元合一，進入無礙神通。",
+                science_title: "量子非局域性意識投射與端粒酶修復",
+                science_desc: "在微管細胞結構（Microtubules）中，電子雲產生宏觀量子疊加態。當意識達到深層真空態，端粒酶活性增加 300%，逆轉細胞分化老化鐘。"
+            }
+        ];
+
+        // 九步修仙詳細數據庫 (繁體中文)
+        const ascensionStepsData = [
+            { num: "STAGE 01 - 築基煉己", title: "築基煉己：底層架構固化", desc: "丹道之始，重在築基。在現代系統中，此步代表「全自動基礎基礎設施」與「生命底能固化」。利用 modern CI/CD 與無伺服器架構，免去冗餘人工勞動，奠定百日不拔之基石。" },
+            { num: "STAGE 02 - 採藥歸鼎", title: "採藥歸鼎：純粹成分凝聚", desc: "採天地之精華，納入乾坤爐鼎。在 MitoActiveLife 系統中，這代表「高活性原料 NMN」與「混元數據資產」的無損採集，為生命合成高純度 ATP 提供不竭燃料。" },
+            { num: "STAGE 03 - 乾坤交媾", title: "乾坤交媾：多維諧振諧調", desc: "陰陽化合，天地共鳴。將「科碼活化因子」與「高感故事敘事」深度碰撞，消除同質化噪音，讓商業勢能與細胞活性在極致諧振中誕生爆發力。" },
+            { num: "STAGE 04 - 周天火候", title: "周天火候：動態反饋調校", desc: "差之毫釐，謬以千里。火候代表控制精度。於此步驟，系統自動化反饋迴圈（Feedback Loop）與人體細胞代謝速率（Metabolic Rate）將進行精準調配，保持恆常穩定。" },
+            { num: "STAGE 05 - 玉液還丹", title: "玉液還丹：瞬態能防禦重構", desc: "玉液灌溉，百骸滋潤。此為「日間防禦系統 (Sustain Serum)」與細胞日間能量的結晶。將短暫的爆發能量重構為長效屏障，全天候抵禦氧化與光老化壓力。" },
+            { num: "STAGE 06 - 金液還丹", title: "金液還丹：長效端粒保護", desc: "點石成金，金丹不朽。Teleactive™ 進階端粒活化配方發揮無上之功。以 NAD+ 代謝為橋梁，間接提供端粒維持所需的修復環境，保護 DNA 與粒線體膜完整。" },
+            { num: "STAGE 07 - 脫胎神化", title: "脫胎神化：突破常規臨界", desc: "破繭而出，羽化登仙。這代表打破傳統成分競爭的毫克數神話，進入 MitoActiveLife 的「90-Day Reset 系統管理計劃」，脫離無序內耗，取得絕對領先優勢。" },
+            { num: "STAGE 08 - 移神乾頂", title: "移神乾頂：自治自演進生態", desc: "元神出竅，高維俯瞰。代表「AI 代理人網絡自組織自適應」與細胞元氣的自主升級。品牌與個體脫離基礎運維枷鎖，達到全自動化自主營運、自適應調修。" },
+            { num: "STAGE 09 - 虛空粉碎", title: "虛空粉碎：零熵無極循環", desc: "虛空粉碎，合於無極. 系統達到完美「零熵狀態 (Absolute Negative Entropy)」。數據、生命能、商業路徑與不朽端粒交融一體，生生不息，循環流轉無始無終。" }
+        ];
+
+        let currentActiveChapterIndex = 0;
+        let isPlaying = false;
+        let playInterval = null;
+        let videoProgress = 0;
+        let durationSeconds = 225; // 3分45秒 = 225秒
+        let currentTimeSeconds = 0;
+
+        // 初始化渲染影片大綱
+        function renderVideoChaptersList() {
+            const container = document.getElementById('video-chapters-container');
+            container.innerHTML = '';
+            
+            videoChaptersData.forEach((ch, idx) => {
+                const isSelected = idx === currentActiveChapterIndex;
+                const borderClass = isSelected ? 'border-[#d4b47a] bg-[#1a1a1a]' : 'border-[#d4b47a]/15 bg-black/60';
+                const textGoldClass = isSelected ? 'text-[#d4b47a]' : 'text-slate-400 group-hover:text-[#d4b47a]';
+                
+                const itemHtml = `
+                    <div onclick="switchChapter(${idx}, true)" class="group cursor-pointer p-4 rounded-lg border ${borderClass} hover:border-[#d4b47a] transition-all flex flex-col justify-between items-stretch">
+                        <div class="flex justify-between items-center text-xs font-mono mb-2">
+                            <span class="text-[#a33b3b]">${ch.num}</span>
+                            <span class="text-neutral-500">${ch.duration}</span>
+                        </div>
+                        <h5 class="text-sm font-bold ${textGoldClass} transition-colors font-tao">${ch.title}</h5>
+                        <div class="flex items-center space-x-2 text-[10px] text-neutral-500 mt-2">
+                            <i class="fa-solid fa-link text-[#d4b47a]/50"></i>
+                            <span>勾稽經典 & 生物反饋</span>
+                        </div>
+                    </div>
+                `;
+                container.innerHTML += itemHtml;
+            });
+        }
+
+        function switchChapter(index, autoPlayAfterSwitch) {
+            currentActiveChapterIndex = index;
+            const ch = videoChaptersData[index];
+
+            // 更新播放器 HUD 資訊
+            document.getElementById('player-chapter-num').innerText = ch.num;
+            document.getElementById('player-chapter-title').innerText = ch.title;
+            document.getElementById('live-subtitle').innerText = ch.spoken;
+
+            // 更新雙向勾稽結果
+            document.getElementById('audit-classic-title').innerText = ch.classic_title;
+            document.getElementById('audit-classic-desc').innerText = ch.classic_desc;
+            document.getElementById('audit-science-title').innerText = ch.science_title;
+            document.getElementById('audit-science-desc').innerText = ch.science_desc;
+
+            // 解析時間
+            const timeParts = ch.duration.split(':');
+            durationSeconds = parseInt(timeParts[0]) * 60 + parseInt(timeParts[1]);
+            document.getElementById('total-time').innerText = ch.duration;
+
+            // 重置時間進度
+            currentTimeSeconds = 0;
+            updateProgressBar();
+
+            renderVideoChaptersList();
+
+            if (autoPlayAfterSwitch) {
+                startVideoPlayback();
+                showNotification(`已定位授課影片：【${ch.title}】`);
+            } else {
+                stopVideoPlayback();
+            }
+
+            // 更新影片模擬視覺動畫特效
+            const fxBox = document.getElementById('video-visual-fx');
+            if (index === 0) {
+                fxBox.innerHTML = `
+                    <svg class="w-40 h-40 text-[#d4b47a] animate-[spin_40s_linear_infinite]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="50" cy="50" r="45" stroke="currentColor" stroke-width="1.5" stroke-dasharray="3 3"/>
+                        <path d="M50 5C25.1 5 5 25.1 5 50C5 74.9 25.1 95 50 95C74.9 95 95 74.9 95 50" stroke="currentColor" stroke-width="1.5"/>
+                        <circle cx="50" cy="27.5" r="5" fill="currentColor"/>
+                        <circle cx="50" cy="72.5" r="5" fill="#000" stroke="currentColor" stroke-width="1.5"/>
+                    </svg>
+                `;
+            } else if (index === 1) {
+                fxBox.innerHTML = `
+                    <svg class="w-40 h-40 text-[#a33b3b] animate-[pulse_3s_infinite_ease-in-out]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="25" y="25" width="50" height="50" rx="10" stroke="currentColor" stroke-width="1.5" stroke-dasharray="4 4"/>
+                        <circle cx="50" cy="50" r="15" stroke="currentColor" stroke-width="2"/>
+                        <path d="M10 50 H90 M50 10 V90" stroke="currentColor" stroke-width="0.5"/>
+                    </svg>
+                `;
+            } else {
+                fxBox.innerHTML = `
+                    <svg class="w-40 h-40 text-emerald-500/80 animate-[spin_10s_linear_infinite]" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M50 15 L80 75 L20 75 Z" stroke="currentColor" stroke-width="1.5"/>
+                        <circle cx="50" cy="50" r="10" fill="currentColor"/>
+                    </svg>
+                `;
+            }
+        }
+
+        function toggleVideoPlayback() {
+            if (isPlaying) {
+                pauseVideoPlayback();
+            } else {
+                startVideoPlayback();
+            }
+        }
+
+        function startVideoPlayback() {
+            if (isPlaying) return;
+            isPlaying = true;
+            document.getElementById('play-btn-icon').className = "fa-solid fa-pause text-base";
+            document.getElementById('play-status').innerText = "PLAYING";
+            document.getElementById('play-status').className = "text-[10px] border border-emerald-500/30 rounded-full px-2 py-0.5 bg-black text-emerald-500";
+
+            playInterval = setInterval(() => {
+                currentTimeSeconds++;
+                if (currentTimeSeconds >= durationSeconds) {
+                    currentTimeSeconds = durationSeconds;
+                    stopVideoPlayback();
+                }
+                updateProgressBar();
+            }, 1000);
+        }
+
+        function pauseVideoPlayback() {
+            if (!isPlaying) return;
+            isPlaying = false;
+            document.getElementById('play-btn-icon').className = "fa-solid fa-play text-base";
+            document.getElementById('play-status').innerText = "PAUSED";
+            document.getElementById('play-status').className = "text-[10px] border border-[#a33b3b]/30 rounded-full px-2 py-0.5 bg-black text-[#a33b3b]";
+            clearInterval(playInterval);
+        }
+
+        function stopVideoPlayback() {
+            pauseVideoPlayback();
+            currentTimeSeconds = 0;
+            updateProgressBar();
+        }
+
+        function updateProgressBar() {
+            const percentage = (currentTimeSeconds / durationSeconds) * 100;
+            document.getElementById('progress-bar-fill').style.width = `${percentage}%`;
+            document.getElementById('progress-bar-handle').style.left = `${percentage}%`;
+
+            const formatTime = (secs) => {
+                const m = Math.floor(secs / 60).toString().padStart(2, '0');
+                const s = (secs % 60).toString().padStart(2, '0');
+                return `${m}:${s}`;
+            };
+            document.getElementById('curr-time').innerText = formatTime(currentTimeSeconds);
+        }
+
+        function handleProgressBarClick(event) {
+            const container = document.getElementById('progress-bar-container');
+            const rect = container.getBoundingClientRect();
+            const clickX = event.clientX - rect.left;
+            const width = rect.width;
+            const fraction = Math.min(Math.max(clickX / width, 0), 1);
+            
+            currentTimeSeconds = Math.round(fraction * durationSeconds);
+            updateProgressBar();
+
+            if (isPlaying) {
+                pauseVideoPlayback();
+                startVideoPlayback();
+            }
+        }
+
+        // 手機版選單切換
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const line1 = document.getElementById('line1');
+        const line2 = document.getElementById('line2');
+        const line3 = document.getElementById('line3');
+        let menuOpen = false;
+
+        menuBtn.addEventListener('click', () => {
+            menuOpen = !menuOpen;
+            if (menuOpen) {
+                mobileMenu.classList.remove('translate-x-full');
+                line1.classList.add('rotate-45', 'translate-y-[5px]');
+                line2.classList.add('opacity-0');
+                line3.classList.add('-rotate-45', '-translate-y-[5px]');
+            } else {
+                mobileMenu.classList.add('translate-x-full');
+                line1.classList.remove('rotate-45', 'translate-y-[5px]');
+                line2.classList.remove('opacity-0');
+                line3.classList.remove('-rotate-45', '-translate-y-[5px]');
+            }
+        });
+
+        mobileMenu.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('translate-x-full');
+                line1.classList.remove('rotate-45', 'translate-y-[5px]');
+                line2.classList.remove('opacity-0');
+                line3.classList.remove('-rotate-45', '-translate-y-[5px]');
+                menuOpen = false;
+            });
+        });
+
+        // 系統通知提示
+        function showNotification(msg) {
+            const toast = document.getElementById('toast');
+            const toastMsg = document.getElementById('toast-msg');
+            
+            toastMsg.innerText = msg;
+            toast.classList.remove('translate-y-20', 'opacity-0');
+            
+            setTimeout(() => {
+                toast.classList.add('translate-y-20', 'opacity-0');
+            }, 4000);
+        }
+
+        // 外丹術分頁
+        function setWaidanTab(tab) {
+            const tabs = ['diagnosis', 'downward', 'anchors'];
+            tabs.forEach(t => {
+                const page = document.getElementById(`waidan-tab-${t}`);
+                const btn = document.getElementById(`tab-btn-${t}`);
+                if (t === tab) {
+                    page.classList.remove('hidden');
+                    btn.className = "px-5 py-2 text-xs border border-[#d4b47a] bg-[#d4b47a] text-black font-bold rounded-full transition-all";
+                } else {
+                    page.classList.add('hidden');
+                    btn.className = "px-5 py-2 text-xs border border-[#d4b47a]/30 text-[#d4b47a] rounded-full hover:bg-[#d4b47a]/10 transition-all";
+                }
+            });
+        }
+
+        // 粒線體病徵點擊
+        function showMitoFact(type) {
+            const ids = ['placeholder', 'brain', 'heart', 'muscle', 'metabolism'];
+            ids.forEach(id => {
+                const el = document.getElementById(`mito-${id}`);
+                if (el) {
+                    if (id === type) {
+                        el.classList.remove('hidden');
+                    } else {
+                        el.classList.add('hidden');
+                    }
+                }
+            });
+            
+            let labelName = "";
+            if (type === 'brain') labelName = "頂輪 (大腦)";
+            else if (type === 'heart') labelName = "中丹田 (心臟)";
+            else if (type === 'muscle') labelName = "氣血 (骨骼肌)";
+            else if (type === 'metabolism') labelName = "下丹田 (肝腎代謝)";
+
+            showNotification(`已調閱科碼生技外丹術能量模組: ${labelName}`);
+        }
+
+        // 乾坤鼎煉丹
+        const selectedIngredients = new Set();
+        
+        function toggleIngredient(id) {
+            const card = document.getElementById(`ing-${id}`);
+            const checkbox = card.querySelector('.check-box');
+            
+            if (selectedIngredients.has(id)) {
+                selectedIngredients.delete(id);
+                card.classList.remove('border-[#d4b47a]', 'bg-[#1a1a1a]');
+                card.classList.add('border-[#d4b47a]/15', 'bg-[#121212]');
+                checkbox.innerText = '';
+            } else {
+                if (selectedIngredients.size >= 2) {
+                    showNotification("鼎爐承載有限，每次煉製至多投入兩道原料氣息。");
+                    return;
+                }
+                selectedIngredients.add(id);
+                card.classList.remove('border-[#d4b47a]/15', 'bg-[#121212]');
+                card.classList.add('border-[#d4b47a]', 'bg-[#1a1a1a]');
+                checkbox.innerText = '✓';
+            }
+            
+            const fire = document.getElementById('fire-glow');
+            if (selectedIngredients.size === 1) {
+                fire.className = 'absolute bottom-6 w-16 h-16 bg-[#a33b3b]/40 blur-xl rounded-full transition-all duration-500';
+            } else if (selectedIngredients.size === 2) {
+                fire.className = 'absolute bottom-6 w-24 h-24 bg-[#d4b47a]/30 blur-xl rounded-full transition-all duration-500';
+            } else {
+                fire.className = 'absolute bottom-6 w-12 h-12 bg-[#a33b3b]/20 blur-xl rounded-full transition-all duration-500';
+            }
+        }
+
+        function resetBrewDisplay() {
+            const resultInit = document.getElementById('brew-init-state');
+            const resultLoading = document.getElementById('brew-loading-state');
+            const resultSuccess = document.getElementById('brew-success-state');
+            
+            resultInit.classList.remove('hidden');
+            resultLoading.classList.add('hidden');
+            resultSuccess.classList.add('hidden');
+
+            selectedIngredients.clear();
+            const cards = ['data', 'story', 'koma', 'auto'];
+            cards.forEach(id => {
+                const card = document.getElementById(`ing-${id}`);
+                const checkbox = card.querySelector('.check-box');
+                card.classList.remove('border-[#d4b47a]', 'bg-[#1a1a1a]');
+                card.classList.add('border-[#d4b47a]/15', 'bg-[#121212]');
+                checkbox.innerText = '';
+            });
+
+            document.getElementById('fire-glow').className = 'absolute bottom-6 w-12 h-12 bg-[#a33b3b]/20 blur-xl rounded-full transition-all duration-500';
+        }
+
+        function startBrewing() {
+            if (selectedIngredients.size !== 2) {
+                showNotification("陰陽未調。請先於左側挑選兩道互補的原料投入鼎爐。");
+                return;
+            }
+
+            const cauldron = document.getElementById('cauldron');
+            const resultInit = document.getElementById('brew-init-state');
+            const resultLoading = document.getElementById('brew-loading-state');
+            const resultSuccess = document.getElementById('brew-success-state');
+            
+            cauldron.classList.add('shake-active');
+            resultInit.classList.add('hidden');
+            resultSuccess.classList.add('hidden');
+            resultLoading.classList.remove('hidden');
+
+            const arr = Array.from(selectedIngredients);
+            
+            setTimeout(() => {
+                cauldron.classList.remove('shake-active');
+                resultLoading.classList.add('hidden');
+                resultSuccess.classList.remove('hidden');
+                
+                let danTitle = "";
+                let danDescription = "";
+                let attributeValue = "+99.2%";
+                let utilityText = "";
+                let rankText = "極品先天";
+
+                // 配方編譯 (全面聚焦科碼生技活性)
+                if (arr.includes('data') && arr.includes('koma')) {
+                    danTitle = "法音科碼大還丹";
+                    danDescription = "謝天地大師授課真言與科碼™生技活化因子的共振結晶。能瞬間在心臟與大腦神經髓鞘構建超強保護障壁，逆轉細胞老化分裂時差。";
+                    attributeValue = "+98.7%";
+                    utilityText = "鎖定 Gamma 腦電波相位、活化全身 ATP 供應系統";
+                } else if (arr.includes('koma') && arr.includes('story')) {
+                    danTitle = "Mito Core Daily (Sustain)";
+                    danDescription = "日間粒線體能量管理旗艦配方。採用專利科碼技術，活化粒線體機能。維持全天候高功能狀態，提供無上續航力。";
+                    attributeValue = "+96.8%";
+                    utilityText = "對抗慢性倦怠、提升日間能量與專注度";
+                } else if (arr.includes('koma') && arr.includes('auto')) {
+                    danTitle = "Mito Night Repair (Renew)";
+                    danDescription = "夜間修復重置。採用專利科碼配方，NMN、煙醯胺、神經醯胺，引導細胞層面深層修復。";
+                    attributeValue = "+95.2%";
+                    utilityText = "改善睡眠品質、夜間屏障重建、深度解毒";
+                } else if (arr.includes('data') && arr.includes('story')) {
+                    danTitle = "MitoActiveLife 90-Day Reset";
+                    danDescription = "拒絕不老幻想，誠實記錄老化軌跡。隨附 90 天自評追蹤表與個人化科碼分析報告。以數據說話，建立持久信任。";
+                    attributeValue = "+94.5%";
+                    utilityText = "數據閉環追蹤，防禦同質化競爭，吸引自然流量";
+                } else {
+                    danTitle = "太微科碼自動散";
+                    danDescription = "融合太乙自動化架構。修真大綱、影片片段與千部古籍自動建立超連結交互索引，配合科碼生技，解放神識，免去凡人查詢之苦。";
+                    attributeValue = "+93.8%";
+                    utilityText = "全流程多維生技資訊無損流轉與精準檢索";
+                }
+
+                document.getElementById('dan-name').innerText = danTitle;
+                document.getElementById('dan-desc').innerText = danDescription;
+                document.getElementById('dan-rank').innerText = rankText;
+                document.getElementById('dan-entropy').innerText = attributeValue;
+                document.getElementById('dan-utility').innerText = utilityText;
+                
+                showNotification(`天降祥瑞！您的金丹已順利凝結出爐。 【${danTitle}】`);
+            }, 2500);
+        }
+
+        // 九步修仙
+        function selectAscensionStep(index) {
+            const step = ascensionStepsData[index - 1];
+            if (!step) return;
+            
+            const db = document.getElementById('ascension-decree-box');
+            db.classList.add('scale-95', 'opacity-70');
+            
+            setTimeout(() => {
+                document.getElementById('decree-num').innerText = step.num;
+                document.getElementById('decree-title').innerText = step.title;
+                document.getElementById('decree-desc').innerText = step.desc;
+                db.classList.remove('scale-95', 'opacity-70');
+            }, 200);
+
+            const cards = document.querySelectorAll('.asc-card');
+            cards.forEach((card, idx) => {
+                if (idx === index - 1) {
+                    card.classList.remove('border-[#d4b47a]/15', 'bg-black/60');
+                    card.classList.add('border-[#d4b47a]', 'bg-[#1a1a1a]/80');
+                } else {
+                    card.classList.remove('border-[#d4b47a]', 'bg-[#1a1a1a]/80');
+                    card.classList.add('border-[#d4b47a]/15', 'bg-black/60');
+                }
+            });
+
+            showNotification(`解鎖法門：【${step.title}】`);
+        }
+
+        // 動態 Canvas
+        window.addEventListener('load', () => {
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            
+            let width = canvas.width = window.innerWidth;
+            let height = canvas.height = window.innerHeight;
+            
+            window.addEventListener('resize', () => {
+                width = canvas.width = window.innerWidth;
+                height = canvas.height = window.innerHeight;
+            });
+
+            class Particle {
+                constructor() {
+                    this.reset();
+                }
+
+                reset() {
+                    this.x = Math.random() * width;
+                    this.y = height + Math.random() * 100;
+                    this.size = Math.random() * 2.5 + 0.5;
+                    this.speedY = -(Math.random() * 0.6 + 0.2);
+                    this.speedX = Math.random() * 0.4 - 0.2;
+                    this.alpha = Math.random() * 0.5 + 0.1;
+                    this.colorType = Math.random() > 0.8 ? 'gold' : 'dark';
+                }
+
+                update(mouseX, mouseY) {
+                    this.y += this.speedY;
+                    this.x += this.speedX;
+
+                    if (mouseX && mouseY) {
+                        const dx = this.x - mouseX;
+                        const dy = this.y - mouseY;
+                        const distance = Math.sqrt(dx * dx + dy * dy);
+                        if (distance < 120) {
+                            const force = (120 - distance) / 120;
+                            this.x += (dx / distance) * force * 1.5;
+                            this.y += (dy / distance) * force * 1.5;
+                        }
+                    }
+
+                    if (this.y < 0 || this.alpha <= 0 || this.x < 0 || this.x > width) {
+                        this.reset();
+                    }
+                }
+
+                draw() {
+                    ctx.beginPath();
+                    ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                    if (this.colorType === 'gold') {
+                        ctx.fillStyle = `rgba(212, 180, 122, ${this.alpha * 1.5})`;
+                    } else {
+                        ctx.fillStyle = `rgba(163, 59, 59, ${this.alpha})`;
+                    }
+                    ctx.fill();
+                }
+            }
+
+            const particles = [];
+            const particleCount = 65;
+            for (let i = 0; i < particleCount; i++) {
+                particles.push(new Particle());
+            }
+
+            let mouseX = null;
+            let mouseY = null;
+
+            window.addEventListener('mousemove', (e) => {
+                mouseX = e.clientX;
+                mouseY = e.clientY;
+            });
+
+            window.addEventListener('mouseleave', () => {
+                mouseX = null;
+                mouseY = null;
+            });
+
+            function animate() {
+                ctx.clearRect(0, 0, width, height);
+                for (let i = 0; i < particles.length; i++) {
+                    particles[i].update(mouseX, mouseY);
+                    particles[i].draw();
+                }
+                requestAnimationFrame(animate);
+            }
+
+            animate();
+            
+            // 預設初始化
+            switchChapter(0, false);
+        });
+    </script>
+</body>
+</html>
